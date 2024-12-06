@@ -1,9 +1,11 @@
 from collections import namedtuple
 from copy import deepcopy
+from functools import cmp_to_key
 from sys import exit
 from tqdm import tqdm
 
 import re
+import string
 
 import atexit
 import datetime
@@ -13,9 +15,6 @@ import sys
 
 DELTAS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 ALLDELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
-
-DIGITS = '0123456789'
-HEXDIGITS = '0123456789abcdef'
 
 def mrange(m):
     height = len(m)
@@ -73,17 +72,18 @@ def substr(s, substring_left, substring_right):
 
     return s[start : end]
 
+# Idea stolen from here: https://blog.vero.site/post/advent-leaderboard
 def ints(s):
     a = []
 
     i = 0
     while i < len(s):
         if (
-            s[i] in DIGITS or
-            s[i] in '+-' and i + 1 < len(s) and s[i + 1] in DIGITS
+            s[i] in string.digits or
+            s[i] in '+-' and i + 1 < len(s) and s[i + 1] in string.digits
         ):
             j = i + 1
-            while j < len(s) and s[j] in DIGITS:
+            while j < len(s) and s[j] in string.digits:
                 j += 1
             a.append(int(s[i : j]))
             i = j

@@ -10,11 +10,11 @@ def count(s):
             break
 
         i += 4
-        if i >= len(s) or s[i] not in DIGITS:
+        if i >= len(s) or s[i] not in string.digits:
             continue
 
         start1 = i
-        while i < len(s) and s[i] in DIGITS and i < start1 + 3:
+        while i < len(s) and s[i] in string.digits and i < start1 + 3:
             i += 1
         if i >= len(s) or s[i] != ',':
             continue
@@ -22,11 +22,11 @@ def count(s):
         op1 = int(s[start1 : i])
 
         i += 1
-        if i >= len(s) or s[i] not in DIGITS:
+        if i >= len(s) or s[i] not in string.digits:
             continue
 
         start2 = i
-        while i < len(s) and s[i] in DIGITS and i < start2 + 3:
+        while i < len(s) and s[i] in string.digits and i < start2 + 3:
             i += 1
         if i >= len(s) or s[i] != ')':
             continue
