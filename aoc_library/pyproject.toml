@@ -1,0 +1,11 @@
+# Install with: pip install --editable .../AdventOfCode/aoc_library
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aoc_library"
+version = "2024"
+dependencies = ["tqdm"]
+authors = [{name = "Jan Grudo"}]
