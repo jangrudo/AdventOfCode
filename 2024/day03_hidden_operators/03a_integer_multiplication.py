@@ -35,7 +35,6 @@ def count(s):
 
         i += 1
 
-        print(s[start1 - 4 : i])
         total += op1 * op2
 
     return total

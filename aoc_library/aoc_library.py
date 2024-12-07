@@ -7,10 +7,9 @@ from tqdm import tqdm
 import re
 import string
 
-import atexit
 import datetime
 import os
-import os.path
+import pathlib
 import sys
 
 DELTAS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -44,13 +43,14 @@ def alldeltas(m, i, j):
         if 0 <= ni < height and 0 <= nj < width:
             yield (ni, nj)
 
-def xmin(min_value, value):
+# "g" means "generic". Chosen to prevent collisions with common variable names.
+def gmin(min_value, value):
     if min_value is None:
         return value
     else:
         return min(min_value, value)
 
-def xmax(max_value, value):
+def gmax(max_value, value):
     if max_value is None:
         return value
     else:
@@ -74,30 +74,12 @@ def substr(s, substring_left, substring_right):
 
 # Idea stolen from here: https://blog.vero.site/post/advent-leaderboard
 def ints(s):
-    a = []
-
-    i = 0
-    while i < len(s):
-        if (
-            s[i] in string.digits or
-            s[i] in '+-' and i + 1 < len(s) and s[i + 1] in string.digits
-        ):
-            j = i + 1
-            while j < len(s) and s[j] in string.digits:
-                j += 1
-            a.append(int(s[i : j]))
-            i = j
-            continue
-        i += 1
-
-    return a
+    return [int(x) for x in re.findall(r'-?\d+', s)]
 
 aoc_library_now = datetime.datetime.now()
 
 def print_finish_time():
-    atexit.register(
-        lambda: print('Finished in', datetime.datetime.now() - aoc_library_now)
-    )
+    print('Finished in', datetime.datetime.now() - aoc_library_now)
 
 # Override IDE's habit of running Python scripts from project's root directory.
-os.chdir(os.path.dirname(sys.argv[0]))
+os.chdir(pathlib.Path(sys.argv[0]).parent)
