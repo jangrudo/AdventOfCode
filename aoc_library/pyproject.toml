@@ -9,3 +9,4 @@ name = "aoc_library"
 version = "2024"
 dependencies = ["tqdm", "pytest"]
 authors = [{name = "Jan Grudo"}]
+license = {text = "Public domain"}

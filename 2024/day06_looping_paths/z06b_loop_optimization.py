@@ -37,24 +37,39 @@ def has_loop(m):
     visited = set()
 
     while True:
-        di, dj = STEP[direction]
-        ni = i + di
-        nj = j + dj
 
-        if not mfits(m, ni, nj):
-            return False
+        # Aggressive optimization of the inner loop.
+        if direction == '^':
+            while m[i][j] != '#':
+                i -= 1
+                if i < 0:
+                    return False
+            i += 1
+        elif direction == 'v':
+            while m[i][j] != '#':
+                i += 1
+                if i >= height:
+                    return False
+            i -= 1
+        elif direction == '<':
+            while m[i][j] != '#':
+                j -= 1
+                if j < 0:
+                    return False
+            j += 1
+        elif direction == '>':
+            while m[i][j] != '#':
+                j += 1
+                if j >= width:
+                    return False
+            j -= 1
 
-        if m[ni][nj] == '#':
-            direction = TURN[direction]
+        direction = TURN[direction]
 
-            # Only checking the corners speeds up the processing a bit.
-            if (i, j, direction) in visited:
-                return True
-            visited.add((i, j, direction))
-
-        else:
-            i = ni
-            j = nj
+        # Only checking the corners is enough for loop detection.
+        if (i, j, direction) in visited:
+            return True
+        visited.add((i, j, direction))
 
 count = 0
 

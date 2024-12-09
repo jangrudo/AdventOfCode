@@ -15,6 +15,7 @@ import sys
 DELTAS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 ALLDELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
+# "m" means "map": a two-dimensional rectangular array of chars.
 def mrange(m):
     height = len(m)
     width = len(m[0])
@@ -43,6 +44,48 @@ def alldeltas(m, i, j):
         if 0 <= ni < height and 0 <= nj < width:
             yield (ni, nj)
 
+def mfits(m, i, j):
+    height = len(m)
+    width = len(m[0])
+
+    return 0 <= i < height and 0 <= j < width
+
+def mfind(m, c_sequence):
+    points = []
+    for i, j in mrange(m):
+        if m[i][j] in c_sequence:
+            points.append((i, j))
+    return points
+
+def mcount(m, c_sequence):
+    count = 0
+    for i, j in mrange(m):
+        if m[i][j] in c_sequence:
+            count += 1
+    return count
+
+def msize(m):
+    height = len(m)
+    width = len(m[0])
+    return (height, width)
+
+def mread(f):
+    m = []
+    for line in f:
+        m.append([c for c in line.strip()])
+    return m
+
+def mprint(m):
+    for row in m:
+        print(''.join(row))
+
+# "u" means "unlimited".
+def urange(start=None, step=1):
+    k = 0 if start is None else start
+    while True:
+        yield k
+        k += step
+
 # "g" means "generic". Chosen to prevent collisions with common variable names.
 def gmin(min_value, value):
     if min_value is None:
@@ -55,6 +98,14 @@ def gmax(max_value, value):
         return value
     else:
         return max(max_value, value)
+
+# Iterate over input file lines until the nearest blank one or EOF.
+def fsection(f):
+    for line in f:
+        if line.strip() == '':
+            return
+        else:
+            yield line
 
 def substr(s, substring_left, substring_right):
     if substring_left is None:

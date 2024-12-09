@@ -46,7 +46,7 @@ def has_loop(m):
 
 count = 0
 
-progress = tqdm(total = width * height)
+pbar = tqdm(total = width * height)
 
 for i, j in mrange(m):
     if m[i][j] == '.':
@@ -57,7 +57,7 @@ for i, j in mrange(m):
 
         m[i][j] = '.'
 
-    progress.update(1)
-progress.close()
+    pbar.update(1)
+pbar.close()
 
 print(count)
