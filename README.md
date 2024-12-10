@@ -2,8 +2,8 @@ https://adventofcode.com/about
 
 ---
 
-Solutions without a prefix are close to the originals, with some cleanup and polishing.
+Solutions without an extra suffix are close to the originals, with some cleanup and polishing.
 
-Solutions with **“x”** prefix are post factum improvements.
+Solutions with **“x”** suffix are post factum improvements.
 
-Solutions with **“z”** prefix are optimized for speed, at the cost of clarity.
+Solutions with **“z”** suffix are optimized for speed, at the cost of clarity.

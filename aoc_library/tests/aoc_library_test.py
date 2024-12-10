@@ -11,12 +11,38 @@ class TestGminmax:
 
     def test_many(self):
         assert self.calculate_minmax([1, 2, -3, 5, 0, 2]) == (-3, 5)
+    def test_sorted(self):
+        assert self.calculate_minmax([1, 2, 3, 4, 5]) == (1, 5)
     def test_duplicate(self):
         assert self.calculate_minmax([0, 0, 0]) == (0, 0)
     def test_single(self):
         assert self.calculate_minmax([10]) == (10, 10)
     def test_none(self):
         assert self.calculate_minmax([]) == (None, None)
+
+class TestArgminmax:
+    def calculate_argminmax(self, a):
+        min_value = None
+        max_value = None
+        argmin_i = None
+        argmax_i = None
+
+        for i in range(len(a)):
+            min_value, argmin_i = argmin(min_value, argmin_i, a[i], i)
+            max_value, argmax_i = argmax(max_value, argmax_i, a[i], i)
+
+        return (min_value, max_value, argmin_i, argmax_i)
+
+    def test_many(self):
+        assert self.calculate_argminmax([0, 6, -2, -4, 2]) == (-4, 6, 3, 1)
+    def test_sorted(self):
+        assert self.calculate_argminmax([8, 7, 4, 2, 1]) == (1, 8, 4, 0)
+    def test_duplicate(self):
+        assert self.calculate_argminmax([1, 2, 2, 2, 1]) == (1, 2, 0, 1)
+    def test_single(self):
+        assert self.calculate_argminmax([0]) == (0, 0, 0, 0)
+    def test_none(self):
+        assert self.calculate_argminmax([]) == (None, None, None, None)
 
 class TestInts():
     def test_list(self):

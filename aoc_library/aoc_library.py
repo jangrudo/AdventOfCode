@@ -1,6 +1,7 @@
 from collections import namedtuple
 from copy import deepcopy
 from functools import cmp_to_key
+from sortedcontainers import *
 from sys import exit
 from tqdm import tqdm
 
@@ -88,16 +89,28 @@ def urange(start=None, step=1):
 
 # "g" means "generic". Chosen to prevent collisions with common variable names.
 def gmin(min_value, value):
-    if min_value is None:
+    if min_value is None or value < min_value:
         return value
     else:
-        return min(min_value, value)
+        return min_value
 
 def gmax(max_value, value):
-    if max_value is None:
+    if max_value is None or value > max_value:
         return value
     else:
-        return max(max_value, value)
+        return max_value
+
+def argmin(min_value, best_parameter, value, parameter):
+    if min_value is None or value < min_value:
+        return value, parameter
+    else:
+        return min_value, best_parameter
+
+def argmax(max_value, best_parameter, value, parameter):
+    if max_value is None or value > max_value:
+        return value, parameter
+    else:
+        return max_value, best_parameter
 
 # Iterate over input file lines until the nearest blank one or EOF.
 def fsection(f):

@@ -3,10 +3,10 @@ from aoc_library import *
 total = 0
 
 def iterate(result, size):
-    if result == target and size == len(a):
-        return True
-    if result > target or size == len(a):
+    if result > target:
         return False
+    if size == len(a):
+        return result == target
 
     return (
         iterate(result + a[size], size + 1) or

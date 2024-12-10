@@ -17,7 +17,7 @@ while True:
     ni = i + di
     nj = j + dj
 
-    if not mfits(m, i, j):
+    if not mfits(m, ni, nj):
         break
 
     if m[ni][nj] == '#':

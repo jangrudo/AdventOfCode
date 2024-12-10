@@ -41,13 +41,14 @@ def has_loop(m):
         ni = i + di
         nj = j + dj
 
-        if not mfits(m, ni, nj):
+        # mfits() slows things down considerably.
+        if not (0 <= ni < height and 0 <= nj < width):
             return False
 
         if m[ni][nj] == '#':
             direction = TURN[direction]
 
-            # Only checking the corners speeds up the processing a bit.
+            # Only checking the corners is enough for loop detection.
             if (i, j, direction) in visited:
                 return True
             visited.add((i, j, direction))
