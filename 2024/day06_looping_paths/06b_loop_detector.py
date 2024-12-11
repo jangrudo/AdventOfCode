@@ -46,9 +46,7 @@ def has_loop(m):
 
 count = 0
 
-pbar = tqdm(total = height * width)
-
-for i, j in mrange(m):
+for i, j in tqdm(mrange(m)):
     if m[i][j] == '.':
         m[i][j] = '#'
 
@@ -56,8 +54,5 @@ for i, j in mrange(m):
             count += 1
 
         m[i][j] = '.'
-
-    pbar.update(1)
-pbar.close()
 
 print(count)

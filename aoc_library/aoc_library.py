@@ -17,13 +17,38 @@ DELTAS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 ALLDELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
 # "m" means "map": a two-dimensional rectangular array of chars.
-def mrange(m):
+def mread(f):
+    m = []
+    for line in f:
+        m.append([c for c in line.strip()])
+    return m
+
+def mprint(m):
+    for row in m:
+        print(''.join(row))
+
+def msize(m):
     height = len(m)
     width = len(m[0])
+    return (height, width)
 
-    for i in range(height):
-        for j in range(width):
-            yield (i, j)
+# This wrapper allows to iterate over maps with tqdm (luckily, it only needs __len__).
+class _MrangeIterator:
+    def __init__(self, m):
+        self.m = m
+        self.height = len(m)
+        self.width = len(m[0])
+
+    def __len__(self):
+        return self.height * self.width
+
+    def __iter__(self):
+        for i in range(self.height):
+            for j in range(self.width):
+                yield (i, j)
+
+def mrange(m):
+    return _MrangeIterator(m)
 
 def deltas(m, i, j):
     height = len(m)
@@ -59,26 +84,7 @@ def mfind(m, c_sequence):
     return points
 
 def mcount(m, c_sequence):
-    count = 0
-    for i, j in mrange(m):
-        if m[i][j] in c_sequence:
-            count += 1
-    return count
-
-def msize(m):
-    height = len(m)
-    width = len(m[0])
-    return (height, width)
-
-def mread(f):
-    m = []
-    for line in f:
-        m.append([c for c in line.strip()])
-    return m
-
-def mprint(m):
-    for row in m:
-        print(''.join(row))
+    return len(mfind(m, c_sequence))
 
 # "u" means "unlimited".
 def urange(start=None, step=1):

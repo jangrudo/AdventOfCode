@@ -3,10 +3,12 @@ from aoc_library import *
 with open('input') as f:
     m = mread(f)
 
-i0, j0 = mfind(m, '^')[0]
+height, width = msize(m)
 
 TURN = {'^' : '>', '>': 'v', 'v': '<', '<': '^'}
 STEP = {'^' : (-1, 0), '>': (0, 1), 'v': (1, 0), '<': (0, -1)}
+
+i0, j0 = mfind(m, '^')[0]
 
 def mark_reachable(m):
     i, j = i0, j0
@@ -14,8 +16,6 @@ def mark_reachable(m):
     direction = '^'
 
     while True:
-        m[i][j] = 'X'
-
         di, dj = STEP[direction]
         ni = i + di
         nj = j + dj
@@ -26,6 +26,7 @@ def mark_reachable(m):
         if m[ni][nj] == '#':
             direction = TURN[direction]
         else:
+            m[ni][nj] = 'X'
             i = ni
             j = nj
 
@@ -57,16 +58,11 @@ def has_loop(m):
             i = ni
             j = nj
 
-count = 0
-
 mark_reachable(m)
 
-m[i0][j0] = '^'
+count = 0
 
-height, width = msize(m)
-pbar = tqdm(total = height * width)
-
-for i, j in mrange(m):
+for i, j in tqdm(mrange(m)):
     # Only consider obstacles which could alter the original path.
     if m[i][j] == 'X':
         m[i][j] = '#'
@@ -75,9 +71,6 @@ for i, j in mrange(m):
             count += 1
 
         m[i][j] = 'X'
-
-    pbar.update(1)
-pbar.close()
 
 print(count)
 
