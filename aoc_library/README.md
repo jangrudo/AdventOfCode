@@ -5,4 +5,8 @@ pip install --upgrade pip
 pip install --editable .../AdventOfCode/aoc_library
 ```
 
-(Alternatively, copy `aoc_library.py` file to the solutions folder, or add it to `PYTHONPATH`).
+(`pip` version `21.3` or higher is required to support editable installs with
+`pyproject.toml`).
+
+Alternatively, copy `aoc_library.py` file to the solution script’s directory, or add
+`aoc_library` directory to `PYTHONPATH`.
