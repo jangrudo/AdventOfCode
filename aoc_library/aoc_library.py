@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections import *
 from copy import deepcopy
 from functools import cmp_to_key
 from sortedcontainers import *
@@ -84,7 +84,11 @@ def mfind(m, c_sequence):
     return points
 
 def mcount(m, c_sequence):
-    return len(mfind(m, c_sequence))
+    count = 0
+    for i, j in mrange(m):
+        if m[i][j] in c_sequence:
+            count += 1
+    return count
 
 # "u" means "unlimited".
 def urange(start=None, step=1):
