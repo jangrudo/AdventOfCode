@@ -15,7 +15,6 @@ for i, j in mrange(m):
         break
 
 TURN = {'^' : '>', '>': 'v', 'v': '<', '<': '^'}
-STEP = {'^' : (-1, 0), '>': (0, 1), 'v': (1, 0), '<': (0, -1)}
 
 def has_loop(m):
     ci, cj = i0, j0

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aoc_library"
-version = "2024.12.14"
+version = "2024.12.15"
 dependencies = ["numpy", "sortedcontainers", "tqdm", "pytest"]
 authors = [{name = "Jan Grudo"}]
 license = {text = "Public domain"}

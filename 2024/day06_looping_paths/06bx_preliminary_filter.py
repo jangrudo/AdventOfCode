@@ -6,7 +6,6 @@ with open('input') as f:
 height, width = msize(m)
 
 TURN = {'^' : '>', '>': 'v', 'v': '<', '<': '^'}
-STEP = {'^' : (-1, 0), '>': (0, 1), 'v': (1, 0), '<': (0, -1)}
 
 i0, j0 = mfind(m, '^')[0]
 

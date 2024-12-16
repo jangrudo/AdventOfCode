@@ -18,7 +18,7 @@ def check(a):
     return True
 
 with open('input') as f:
-    for line in fsection(f):
+    for line in fblock(f):
         rules.add(tuple(ints(line)))
 
     for line in f:

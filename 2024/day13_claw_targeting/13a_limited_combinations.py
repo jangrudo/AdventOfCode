@@ -10,7 +10,7 @@ def solve(xa, ya, xb, yb, xprize, yprize):
     return 0
 
 with open('input') as f:
-    while lines := list(fsection(f)):
+    while lines := list(fblock(f)):
 
         xa, ya = ints(lines[0])
         xb, yb = ints(lines[1])

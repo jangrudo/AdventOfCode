@@ -21,6 +21,8 @@ import sys
 DELTAS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 ALLDELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
+STEP = {'^' : (-1, 0), 'v': (1, 0), '<': (0, -1), '>': (0, 1)}
+
 # "m" means "map": a two-dimensional rectangular array of chars.
 def mread(f):
     m = []
@@ -82,18 +84,10 @@ def mfits(m, i, j):
     return 0 <= i < height and 0 <= j < width
 
 def mfind(m, c_sequence):
-    points = []
-    for i, j in mrange(m):
-        if m[i][j] in c_sequence:
-            points.append((i, j))
-    return points
+    return [(i, j) for i, j in mrange(m) if m[i][j] in c_sequence]
 
 def mcount(m, c_sequence):
-    count = 0
-    for i, j in mrange(m):
-        if m[i][j] in c_sequence:
-            count += 1
-    return count
+    return sum(1 for i, j in mrange(m) if m[i][j] in c_sequence)
 
 # ---- Iterators ------------------------------------------------------------------------
 # "u" means "unlimited".
@@ -131,12 +125,12 @@ def argmax(max_value, best_parameter, value, parameter):
 
 # ---- Input file parsing ---------------------------------------------------------------
 # Iterate over input file lines until the nearest blank one or EOF.
-def fsection(f):
+def fblock(f):
     for line in f:
         if line.strip() == '':
             return
         else:
-            yield line
+            yield line.strip()
 
 def substr(s, substring_left, substring_right):
     if substring_left is None:
