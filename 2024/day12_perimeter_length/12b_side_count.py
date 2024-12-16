@@ -29,7 +29,7 @@ def get_area(i0, j0):
 
     return area
 
-Edge = namedtuple('Edge', 'i1 i2 j1 j2')
+Edge = xtuple('i1 i2 j1 j2')
 
 def calculate_perimeter(area):
     perimeter = set()

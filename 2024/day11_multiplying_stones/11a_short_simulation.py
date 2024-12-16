@@ -3,10 +3,7 @@ from aoc_library import *
 with open('input') as f:
     a = ints(f.readline())
 
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.nxt = None
+Node = xclass('value', nxt=None)
 
 root = Node(a[0])
 tail = root
@@ -47,5 +44,3 @@ def count_nodes(node):
     return count
 
 print(count_nodes(root))
-
-print_finish_time()

@@ -23,5 +23,3 @@ for iteration in range(75):
     a = na
 
 print(a.total())
-
-print_finish_time()

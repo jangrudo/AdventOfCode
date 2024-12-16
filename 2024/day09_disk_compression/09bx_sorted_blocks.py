@@ -4,7 +4,7 @@ with open('input') as f:
     dense = [int(x) for x in f.readline().strip()]
 
 # i denotes left boundary of the memory block.
-Block = namedtuple('Block', 'size i')
+Block = xtuple('size i')
 
 # This essentially functions as 10 adjacent arrays (one per block size), each sorted by i.
 free = SortedList()
@@ -57,5 +57,3 @@ for ident, block in enumerate(used):
         total += i * ident
 
 print(total)
-
-print_finish_time()

@@ -73,5 +73,3 @@ for i, j in tqdm(mrange(m)):
         m[i][j] = 'X'
 
 print(count)
-
-print_finish_time()

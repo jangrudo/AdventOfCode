@@ -145,5 +145,3 @@ for i, j in tqdm(mrange(m)):
         update_obstacle_lookup_j_local(m, i, j)
 
 print(count)
-
-print_finish_time()

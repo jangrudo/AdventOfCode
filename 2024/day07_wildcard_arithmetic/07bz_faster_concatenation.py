@@ -30,5 +30,3 @@ with open('input') as f:
             total += target
 
 print(total)
-
-print_finish_time()
