@@ -5,9 +5,7 @@ with open('input') as f:
 
 total = 0
 
-painted = deepcopy(m)
-for i, j in mrange(painted):
-    painted[i][j] = False
+painted = mcreate(msize(m), False)
 
 def get_area(i0, j0):
     if painted[i0][j0]:

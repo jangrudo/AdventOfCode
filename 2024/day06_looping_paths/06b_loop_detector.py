@@ -14,8 +14,6 @@ for i, j in mrange(m):
         i0, j0 = i, j
         break
 
-TURN = {'^' : '>', '>': 'v', 'v': '<', '<': '^'}
-
 def has_loop(m):
     ci, cj = i0, j0
 
@@ -32,7 +30,7 @@ def has_loop(m):
             return False
 
         if m[ni][nj] == '#':
-            direction = TURN[direction]
+            direction = TURN_RIGHT[direction]
 
             # Only checking the corners speeds up the processing a bit.
             if (ci, cj, direction) in visited:

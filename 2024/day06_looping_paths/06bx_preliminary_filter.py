@@ -5,8 +5,6 @@ with open('input') as f:
 
 height, width = msize(m)
 
-TURN = {'^' : '>', '>': 'v', 'v': '<', '<': '^'}
-
 i0, j0 = mfind(m, '^')[0]
 
 def mark_reachable(m):
@@ -15,19 +13,16 @@ def mark_reachable(m):
     direction = '^'
 
     while True:
-        di, dj = STEP[direction]
-        ni = i + di
-        nj = j + dj
+        ni, nj = mmove(i, j, direction)
 
         if not mfits(m, ni, nj):
             return
 
         if m[ni][nj] == '#':
-            direction = TURN[direction]
+            direction = TURN_RIGHT[direction]
         else:
             m[ni][nj] = 'X'
-            i = ni
-            j = nj
+            i, j = ni, nj
 
 def has_loop(m):
     i, j = i0, j0
@@ -37,16 +32,14 @@ def has_loop(m):
     visited = set()
 
     while True:
-        di, dj = STEP[direction]
-        ni = i + di
-        nj = j + dj
+        ni, nj = mmove(i, j, direction)
 
         # mfits() slows things down considerably.
         if not (0 <= ni < height and 0 <= nj < width):
             return False
 
         if m[ni][nj] == '#':
-            direction = TURN[direction]
+            direction = TURN_RIGHT[direction]
 
             # Only checking the corners is enough for loop detection.
             if (i, j, direction) in visited:
@@ -54,8 +47,7 @@ def has_loop(m):
             visited.add((i, j, direction))
 
         else:
-            i = ni
-            j = nj
+            i, j = ni, nj
 
 mark_reachable(m)
 

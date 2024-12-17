@@ -14,8 +14,6 @@ for i, j in mrange(m):
         ci, cj = i, j
         break
 
-TURN = {'^' : '>', '>': 'v', 'v': '<', '<': '^'}
-
 direction = '^'
 
 while True:
@@ -29,7 +27,7 @@ while True:
         break
 
     if m[ni][nj] == '#':
-        direction = TURN[direction]
+        direction = TURN_RIGHT[direction]
     else:
         ci = ni
         cj = nj

@@ -23,6 +23,9 @@ ALLDELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1
 
 STEP = {'^' : (-1, 0), 'v': (1, 0), '<': (0, -1), '>': (0, 1)}
 
+TURN_LEFT  = {'^' : '<', 'v': '>', '<': 'v', '>': '^'}
+TURN_RIGHT = {'^' : '>', 'v': '<', '<': '^', '>': 'v'}
+
 # "m" means "map": a two-dimensional rectangular array of chars.
 def mread(f):
     m = []
@@ -38,6 +41,10 @@ def msize(m):
     height = len(m)
     width = len(m[0])
     return (height, width)
+
+def mcreate(size, item_value):
+    height, width = size
+    return [[item_value for j in range(width)] for i in range(height)]
 
 def mrange(m):
     return _MrangeIterator(m)
@@ -76,6 +83,10 @@ def alldeltas(m, i, j):
         nj = j + dj
         if 0 <= ni < height and 0 <= nj < width:
             yield (ni, nj)
+
+def mmove(i, j, direction):
+    di, dj = STEP[direction]
+    return i + di, j + dj
 
 def mfits(m, i, j):
     height = len(m)

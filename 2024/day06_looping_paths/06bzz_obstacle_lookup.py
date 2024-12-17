@@ -5,13 +5,11 @@ with open('input') as f:
 
 height, width = msize(m)
 
-TURN = {'^' : '>', '>': 'v', 'v': '<', '<': '^'}
-
 i0, j0 = mfind(m, '^')[0]
 
 jump = {}
 for direction in STEP:
-    jump[direction] = deepcopy(m)
+    jump[direction] = mcreate(msize(m), None)
 
 def update_obstacle_lookup_i(m, i):
 
@@ -83,19 +81,16 @@ def mark_reachable(m):
     direction = '^'
 
     while True:
-        di, dj = STEP[direction]
-        ni = i + di
-        nj = j + dj
+        ni, nj = mmove(i, j, direction)
 
         if not mfits(m, ni, nj):
             return
 
         if m[ni][nj] == '#':
-            direction = TURN[direction]
+            direction = TURN_RIGHT[direction]
         else:
             m[ni][nj] = 'X'
-            i = ni
-            j = nj
+            i, j = ni, nj
 
 def has_loop(m):
     i, j = i0, j0
@@ -111,7 +106,7 @@ def has_loop(m):
         if not (0 <= i < height and 0 <= j < width):
             return False
 
-        direction = TURN[direction]
+        direction = TURN_RIGHT[direction]
 
         # Only checking the corners is enough for loop detection.
         if (i, j, direction) in visited:

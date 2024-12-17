@@ -13,7 +13,7 @@ for x in a[1:]:
     tail.nxt = node
     tail = node
 
-for iteration in range(25):
+for iteration in tqdm(range(25)):
 
     node = root
     while node is not None:

@@ -5,9 +5,7 @@ with open('input') as f:
 
 total = 0
 
-visited = deepcopy(m)
-for i, j in mrange(visited):
-    visited[i][j] = False
+visited = mcreate(msize(m), False)
 
 def get_area(i0, j0):
     if visited[i0][j0]:
