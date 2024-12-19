@@ -5,13 +5,13 @@ with open('input') as f:
 
     program = ints(f.readline())
 
-ip = 0
-
 def get_combo(arg):
     if arg <= 3:
         return arg
     assert arg != 7
     return reg[arg - 4]
+
+ip = 0
 
 output = []
 
