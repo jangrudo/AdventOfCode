@@ -18,11 +18,11 @@ def check(a):
     return True
 
 with open('input') as f:
-    for line in fblock(f):
-        rules.add(tuple(ints(line)))
+    for s in lines(f):
+        rules.add(tuple(ints(s)))
 
-    for line in f:
-        a = ints(line)
+    for s in lines(f):
+        a = ints(s)
 
         if not check(a):
             a.sort(key=cmp_to_key(compare))

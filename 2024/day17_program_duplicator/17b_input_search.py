@@ -1,7 +1,7 @@
 from aoc_library import *
 
 with open('input') as f:
-    list(fblock(f))  # Ignore. Registers b and c seem to be always set to zero.
+    lines(f)  # Ignore. Registers b and c seem to be always set to zero.
 
     program = ints(f.readline())
 

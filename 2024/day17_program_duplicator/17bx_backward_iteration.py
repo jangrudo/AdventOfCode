@@ -3,7 +3,7 @@
 from aoc_library import *
 
 with open('input') as f:
-    initial_reg = [ints(line)[0] for line in fblock(f)]
+    initial_reg = [ints(s)[0] for s in lines(f)]
 
     program = ints(f.readline())
 

@@ -18,11 +18,11 @@ def check(a):
     return True
 
 with open('input') as f:
-    for line in fblock(f):
-        rules.add(tuple(ints(line)))
+    for s in lines(f):
+        rules.add(tuple(ints(s)))
 
-    for line in f:
-        a = ints(line)
+    for s in lines(f):
+        a = ints(s)
 
         if check(a):
             total += a[len(a) // 2]

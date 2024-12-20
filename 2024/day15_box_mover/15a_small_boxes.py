@@ -1,9 +1,9 @@
 from aoc_library import *
 
 with open('input') as f:
-    m = mread(fblock(f))
+    m = mread(f)
 
-    directions = ''.join(fblock(f))
+    directions = ''.join(lines(f))
 
 i, j = mfind(m, '@')[0]
 

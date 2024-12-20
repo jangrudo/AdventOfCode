@@ -54,11 +54,11 @@ def solve(xa, ya, xb, yb, xprize, yprize):
     return 3 * i + j
 
 with open('input') as f:
-    while lines := list(fblock(f)):
+    while block := lines(f):
 
-        xa, ya = ints(lines[0])
-        xb, yb = ints(lines[1])
-        xprize, yprize = ints(lines[2])
+        xa, ya = ints(block[0])
+        xb, yb = ints(block[1])
+        xprize, yprize = ints(block[2])
 
         xprize += 10000000000000
         yprize += 10000000000000

@@ -13,11 +13,11 @@ finish = (size[0] - 1, size[1] - 1)
 for fall in falls[: 1024]:
     m[fall[1]][fall[0]] = '#'
 
-Partition = xclass('', q=None, nq=None, visited=None)
+Partition = xclass('q visited', nq=None)
 
 def can_move(ifall, jfall):
 
-    # The fallen block may partition the labirynth into up to 4 different areas. Start
+    # The fallen block may partition the labyrinth into up to 4 different areas. Start
     # discovering them, beginning with the cells adjacent to the fallen block. At any
     # moment in time, partitions discovered so far shall consist of cells which are
     # reachable from the starting points within a given number of steps. Whenever some
@@ -32,14 +32,12 @@ def can_move(ifall, jfall):
     #
     # If at some moment only one partitions remains, it means that all the cells around
     # the fallen block are either interconnected or lead to dead ends, and so the
-    # labirynth is still traversable. If no partitions remain, it means the fallen block
+    # labyrinth is still traversable. If no partitions remain, it means the fallen block
     # is completely surrounded by dead ends, and can be ignored as well.
     partitions = []
     for i, j in deltas(m, ifall, jfall):
         if m[i][j] != '#':
-            partitions.append(Partition())
-            partitions[-1].q = {(i, j)}
-            partitions[-1].visited = {(i, j)}
+            partitions.append(Partition({(i, j)}, {(i, j)}))
 
     while True:
         if len(partitions) <= 1:

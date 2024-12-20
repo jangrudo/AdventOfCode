@@ -17,7 +17,7 @@ import os
 import pathlib
 import sys
 
-# ---- Two-dimensinal arrays ------------------------------------------------------------
+# ---- Maps -----------------------------------------------------------------------------
 DELTAS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 ALLDELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
@@ -29,8 +29,8 @@ TURN_RIGHT = {'^' : '>', 'v': '<', '<': '^', '>': 'v'}
 # "m" means "map": a two-dimensional rectangular array of chars.
 def mread(f):
     m = []
-    for line in f:
-        m.append([c for c in line.strip()])
+    for s in lines(f):
+        m.append(list(s))
     return m
 
 def mprint(m):
@@ -134,14 +134,19 @@ def argmax(max_value, best_parameter, value, parameter):
     else:
         return max_value, best_parameter
 
-# ---- Input file parsing ---------------------------------------------------------------
-# Iterate over input file lines until the nearest blank one or EOF.
-def fblock(f):
+# ---- Parsing --------------------------------------------------------------------------
+# Read lines from the input file, newlines stripped, until the nearest blank line or EOF.
+def lines(f):
+    lines_list = []
+
     for line in f:
-        if line.strip() == '':
-            return
-        else:
-            yield line.strip()
+        line = line.rstrip()
+        if line == '':
+            break
+
+        lines_list.append(line)
+
+    return lines_list
 
 def substr(s, substring_left, substring_right):
     if substring_left is None:
@@ -163,7 +168,7 @@ def substr(s, substring_left, substring_right):
 def ints(s):
     return [int(x) for x in re.findall(r'-?\d+', s)]
 
-# ---- Classes --------------------------------------------------------------------------
+# ---- Structures -----------------------------------------------------------------------
 # Similar to collections.namedtuple, but doesn't require to type the class name twice.
 #
 # The sole argument should be a space-separated list of field names.
@@ -263,7 +268,7 @@ class _XclassBase():
             setattr(self, self._primary_member_names[i], value)
 
         for key, value in self._secondary_member_defaults.items():
-            setattr(self, key, value)
+            setattr(self, key, deepcopy(value))
 
     def __repr__(self):
         return ('({})'.format(', '.join(
