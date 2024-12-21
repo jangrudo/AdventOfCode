@@ -1,4 +1,6 @@
-from aoc_library import *
+from aoc_shortcuts import *
+
+open_input('input')
 
 total = 0
 
@@ -14,13 +16,11 @@ def iterate(result, size):
         iterate(int(str(result) + str(a[size])), size + 1)
     )
 
-with open('input') as f:
-    for line in tqdm(f.readlines()):
-        a = ints(line)
-        target = a[0]
-        a = a[1:]
+for s in tqdm(lines()):
+    a = ints(s)
+    target = popfront(a)
 
-        if iterate(a[0], 1):
-            total += target
+    if iterate(a[0], 1):
+        total += target
 
 print(total)

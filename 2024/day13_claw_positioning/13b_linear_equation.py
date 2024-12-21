@@ -1,4 +1,6 @@
-from aoc_library import *
+from aoc_shortcuts import *
+
+open_input('input')
 
 total = 0
 
@@ -53,16 +55,15 @@ def solve(xa, ya, xb, yb, xprize, yprize):
 
     return 3 * i + j
 
-with open('input') as f:
-    while block := lines(f):
+while block := lines():
 
-        xa, ya = ints(block[0])
-        xb, yb = ints(block[1])
-        xprize, yprize = ints(block[2])
+    xa, ya = ints(block[0])
+    xb, yb = ints(block[1])
+    xprize, yprize = ints(block[2])
 
-        xprize += 10000000000000
-        yprize += 10000000000000
+    xprize += 10000000000000
+    yprize += 10000000000000
 
-        total += solve(xa, ya, xb, yb, xprize, yprize)
+    total += solve(xa, ya, xb, yb, xprize, yprize)
 
 print(total)

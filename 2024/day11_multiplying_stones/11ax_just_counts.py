@@ -1,7 +1,8 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
-with open('input') as f:
-    a = Counter(ints(f.readline()))
+open_input('input')
+
+a = Counter(ints(lines()[0]))
 
 for iteration in range(25):
 

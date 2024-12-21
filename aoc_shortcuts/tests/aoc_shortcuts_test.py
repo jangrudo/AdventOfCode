@@ -1,4 +1,4 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
 class TestGminmax:
     def calculate_minmax(self, a):

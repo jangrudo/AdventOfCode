@@ -1,15 +1,10 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
-m = []
+open_input('input')
 
-with open('input') as f:
-    for line in f:
-        m.append([c for c in line.strip()])
+m = mread()
 
 count = 0
-
-height = len(m)
-width = len(m[0])
 
 for i, j in mrange(m):
     for di, dj in ALLDELTAS:
@@ -17,7 +12,7 @@ for i, j in mrange(m):
         for k in range(len('XMAS')):
             ni = i + di * k
             nj = j + dj * k
-            if not (0 <= ni < height and 0 <= nj < width and m[ni][nj] == 'XMAS'[k]):
+            if not (mfits(m, ni, nj) and m[ni][nj] == 'XMAS'[k]):
                 matches = False
                 break
         if matches:

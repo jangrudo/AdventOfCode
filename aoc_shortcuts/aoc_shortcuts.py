@@ -17,6 +17,58 @@ import os
 import pathlib
 import sys
 
+# ---- Parsing --------------------------------------------------------------------------
+aoc_library_file = None
+
+def open_input(input_file_path):
+    global aoc_library_file
+
+    if aoc_library_file is not None:
+        aoc_library_file.close()
+
+    aoc_library_file = open(input_file_path)
+
+# Read lines from the input file, newlines stripped, until the nearest blank line or EOF.
+def lines():
+    assert aoc_library_file is not None
+
+    line_strings_list = []
+
+    for line in aoc_library_file:
+        s = line.rstrip()
+        if s == '':
+            break
+
+        line_strings_list.append(s)
+
+    return line_strings_list
+
+def popfront(a):
+    x = a[0]
+    del a[0]
+    return x
+
+# Idea stolen from here: https://blog.vero.site/post/advent-leaderboard
+def ints(s):
+    return [int(x) for x in re.findall(r'-?\d+', s)]
+
+# This one has never been used so far.
+def substr(s, substring_left, substring_right):
+    if substring_left is None:
+        start = 0
+    else:
+        start = s.find(substring_left)
+        assert start != -1
+        start += len(substring_left)
+
+    if substring_right is None:
+        end = len(s)
+    else:
+        end = s.find(substring_right, start)
+        assert end != -1
+
+    return s[start : end]
+
 # ---- Maps -----------------------------------------------------------------------------
 DELTAS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 ALLDELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
@@ -27,9 +79,9 @@ TURN_LEFT  = {'^' : '<', 'v': '>', '<': 'v', '>': '^'}
 TURN_RIGHT = {'^' : '>', 'v': '<', '<': '^', '>': 'v'}
 
 # "m" means "map": a two-dimensional rectangular array of chars.
-def mread(f):
+def mread():
     m = []
-    for s in lines(f):
+    for s in lines():
         m.append(list(s))
     return m
 
@@ -44,7 +96,7 @@ def msize(m):
 
 def mcreate(size, item_value):
     height, width = size
-    return [[item_value for j in range(width)] for i in range(height)]
+    return [[deepcopy(item_value) for j in range(width)] for i in range(height)]
 
 def mrange(m):
     return _MrangeIterator(m)
@@ -99,74 +151,6 @@ def mfind(m, c_sequence):
 
 def mcount(m, c_sequence):
     return sum(1 for i, j in mrange(m) if m[i][j] in c_sequence)
-
-# ---- Iterators ------------------------------------------------------------------------
-# "u" means "unlimited".
-def urange(start=None, step=1):
-    k = 0 if start is None else start
-    while True:
-        yield k
-        k += step
-
-# ---- Minimum and maximum --------------------------------------------------------------
-# "g" means "generic". Chosen to prevent collisions with common variable names.
-def gmin(min_value, value):
-    if min_value is None or value < min_value:
-        return value
-    else:
-        return min_value
-
-def gmax(max_value, value):
-    if max_value is None or value > max_value:
-        return value
-    else:
-        return max_value
-
-def argmin(min_value, best_parameter, value, parameter):
-    if min_value is None or value < min_value:
-        return value, parameter
-    else:
-        return min_value, best_parameter
-
-def argmax(max_value, best_parameter, value, parameter):
-    if max_value is None or value > max_value:
-        return value, parameter
-    else:
-        return max_value, best_parameter
-
-# ---- Parsing --------------------------------------------------------------------------
-# Read lines from the input file, newlines stripped, until the nearest blank line or EOF.
-def lines(f):
-    lines_list = []
-
-    for line in f:
-        line = line.rstrip()
-        if line == '':
-            break
-
-        lines_list.append(line)
-
-    return lines_list
-
-def substr(s, substring_left, substring_right):
-    if substring_left is None:
-        start = 0
-    else:
-        start = s.find(substring_left)
-        assert start != -1
-        start += len(substring_left)
-
-    if substring_right is None:
-        end = len(s)
-    else:
-        end = s.find(substring_right, start)
-        assert end != -1
-
-    return s[start : end]
-
-# Idea stolen from here: https://blog.vero.site/post/advent-leaderboard
-def ints(s):
-    return [int(x) for x in re.findall(r'-?\d+', s)]
 
 # ---- Structures -----------------------------------------------------------------------
 # Similar to collections.namedtuple, but doesn't require to type the class name twice.
@@ -310,7 +294,41 @@ def _get_member_string(obj, name):
 
     return f'{name}={value_string}'
 
-# ---- Finish time statistics -----------------------------------------------------------
+# ---- Iterators ------------------------------------------------------------------------
+# "u" means "unlimited".
+def urange(start=None, step=1):
+    k = 0 if start is None else start
+    while True:
+        yield k
+        k += step
+
+# ---- Minimum and maximum --------------------------------------------------------------
+# "g" means "generic". Chosen to prevent collisions with common variable names.
+def gmin(min_value, value):
+    if min_value is None or value < min_value:
+        return value
+    else:
+        return min_value
+
+def gmax(max_value, value):
+    if max_value is None or value > max_value:
+        return value
+    else:
+        return max_value
+
+def argmin(min_value, best_parameter, value, parameter):
+    if min_value is None or value < min_value:
+        return value, parameter
+    else:
+        return min_value, best_parameter
+
+def argmax(max_value, best_parameter, value, parameter):
+    if max_value is None or value > max_value:
+        return value, parameter
+    else:
+        return max_value, best_parameter
+
+# ---- Timing ---------------------------------------------------------------------------
 aoc_library_now = datetime.datetime.now()
 
 def print_finish_time():
@@ -327,6 +345,6 @@ def _aoc_library_excepthook(*args):
 
 sys.excepthook = _aoc_library_excepthook
 
-# ---- Current working directory --------------------------------------------------------
+# ---- Startup --------------------------------------------------------------------------
 # Override IDE's habit of running Python scripts from project's root directory.
 os.chdir(pathlib.Path(sys.argv[0]).parent)

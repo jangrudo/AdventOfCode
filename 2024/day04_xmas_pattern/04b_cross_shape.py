@@ -1,15 +1,12 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
-m = []
+open_input('input')
 
-with open('input') as f:
-    for line in f:
-        m.append([c for c in line.strip()])
+m = mread()
 
 count = 0
 
-height = len(m)
-width = len(m[0])
+height, width = msize(m)
 
 for i, j in mrange(m):
     if 0 < i < height - 1 and 0 < j < width - 1 and m[i][j] == 'A':

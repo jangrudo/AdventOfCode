@@ -1,41 +1,24 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
-m = []
+open_input('input')
 
-with open('input') as f:
-    for line in f:
-        m.append([c for c in line.strip()])
+m = mread()
 
-height = len(m)
-width = len(m[0])
-
-for i, j in mrange(m):
-    if m[i][j] == '^':
-        ci, cj = i, j
-        break
+i, j = mfind(m, '^')[0]
 
 direction = '^'
 
 while True:
-    m[ci][cj] = 'X'
+    m[i][j] = 'X'
 
-    di, dj = STEP[direction]
-    ni = ci + di
-    nj = cj + dj
+    ni, nj = mmove(i, j, direction)
 
-    if not (0 <= ni < height and 0 <= nj < width):
+    if not mfits(m, ni, nj):
         break
 
     if m[ni][nj] == '#':
         direction = TURN_RIGHT[direction]
     else:
-        ci = ni
-        cj = nj
+        i, j = ni, nj
 
-count = 0
-
-for i, j in mrange(m):
-    if m[i][j] == 'X':
-        count += 1
-
-print(count)
+print(mcount(m, 'X'))

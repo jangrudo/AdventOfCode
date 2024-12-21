@@ -1,4 +1,6 @@
-from aoc_library import *
+from aoc_shortcuts import *
+
+open_input('input')
 
 TrieNode = xclass('', leaf=False, children={})
 
@@ -33,10 +35,9 @@ def solvable_count(s):
 
     return found[len(s)]
 
-with open('input') as f:
-    for pattern in lines(f)[0].split(', '):
-        trie_add(root, pattern)
+for pattern in lines()[0].split(', '):
+    trie_add(root, pattern)
 
-    count = sum(solvable_count(s) for s in lines(f))
+count = sum(solvable_count(s) for s in lines())
 
 print(count)

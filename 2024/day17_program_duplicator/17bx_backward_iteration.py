@@ -1,11 +1,12 @@
 # Idea stolen from here: https://github.com/KajaBraz/AdventOfCode2024
 
-from aoc_library import *
+from aoc_shortcuts import *
 
-with open('input') as f:
-    initial_reg = [ints(s)[0] for s in lines(f)]
+open_input('input')
 
-    program = ints(f.readline())
+initial_reg = [ints(s)[0] for s in lines()]
+
+program = ints(lines()[0])
 
 # The program in the input files seems to consist of a single loop, which converts the
 # value in register `a` to some output value (without using any extra data, and without

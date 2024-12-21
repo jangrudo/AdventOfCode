@@ -1,7 +1,8 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
-with open('input') as f:
-    s = f.read()
+open_input('input')
+
+s = ' '.join(lines())
 
 ops = re.findall(r'mul\(\d{1,3},\d{1,3}\)', s)
 

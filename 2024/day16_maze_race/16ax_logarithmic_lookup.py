@@ -1,7 +1,8 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
-with open('input') as f:
-    m = mread(f)
+open_input('input')
+
+m = mread()
 
 Node = xtuple('i j d')
 

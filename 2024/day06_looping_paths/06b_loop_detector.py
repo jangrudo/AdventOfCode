@@ -1,31 +1,24 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
-m = []
+open_input('input')
 
-with open('input') as f:
-    for line in f:
-        m.append([c for c in line.strip()])
+m = mread()
 
-height = len(m)
-width = len(m[0])
+height, width = msize(m)
 
-for i, j in mrange(m):
-    if m[i][j] == '^':
-        i0, j0 = i, j
-        break
+i0, j0 = mfind(m, '^')[0]
 
 def has_loop(m):
-    ci, cj = i0, j0
+    i, j = i0, j0
 
     direction = '^'
 
     visited = set()
 
     while True:
-        di, dj = STEP[direction]
-        ni = ci + di
-        nj = cj + dj
+        ni, nj = mmove(i, j, direction)
 
+        # mfits() slows things down considerably.
         if not (0 <= ni < height and 0 <= nj < width):
             return False
 
@@ -33,13 +26,12 @@ def has_loop(m):
             direction = TURN_RIGHT[direction]
 
             # Only checking the corners speeds up the processing a bit.
-            if (ci, cj, direction) in visited:
+            if (i, j, direction) in visited:
                 return True
-            visited.add((ci, cj, direction))
+            visited.add((i, j, direction))
 
         else:
-            ci = ni
-            cj = nj
+            i, j = ni, nj
 
 count = 0
 

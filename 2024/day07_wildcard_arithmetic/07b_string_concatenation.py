@@ -1,4 +1,6 @@
-from aoc_library import *
+from aoc_shortcuts import *
+
+open_input('input')
 
 def check(target, a):
 
@@ -26,13 +28,11 @@ def check(target, a):
 
 total = 0
 
-with open('input') as f:
-    for line in tqdm(f.readlines()):
-        a = ints(line)
-        target = a[0]
-        a = a[1:]
+for s in tqdm(lines()):
+    a = ints(s)
+    target = popfront(a)
 
-        if check(target, a):
-            total += target
+    if check(target, a):
+        total += target
 
 print(total)

@@ -1,4 +1,6 @@
-from aoc_library import *
+from aoc_shortcuts import *
+
+open_input('input')
 
 count = 0
 
@@ -10,11 +12,10 @@ def is_safe(a):
             return False
     return True
 
-with open('input') as f:
-    for line in f:
-        a = ints(line)
+for s in lines():
+    a = ints(s)
 
-        if is_safe(a):
-            count += 1
+    if is_safe(a):
+        count += 1
 
 print(count)

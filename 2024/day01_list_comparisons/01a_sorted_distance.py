@@ -1,13 +1,14 @@
-from aoc_library import *
+from aoc_shortcuts import *
+
+open_input('input')
 
 left = []
 right = []
 
-with open('input') as f:
-    for line in f:
-        l, r = ints(line)
-        left.append(l)
-        right.append(r)
+for s in lines():
+    l, r = ints(s)
+    left.append(l)
+    right.append(r)
 
 left.sort()
 right.sort()

@@ -1,7 +1,8 @@
-from aoc_library import *
+from aoc_shortcuts import *
 
-with open('input') as f:
-    falls = [tuple(ints(line)) for line in f]
+open_input('input')
+
+falls = [tuple(ints(s)) for s in lines()]
 
 size = (71, 71)
 

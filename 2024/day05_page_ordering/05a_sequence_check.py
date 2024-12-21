@@ -1,4 +1,6 @@
-from aoc_library import *
+from aoc_shortcuts import *
+
+open_input('input')
 
 rules = set()
 
@@ -17,20 +19,13 @@ def check(a):
             return False
     return True
 
-with open('input') as f:
-    for line in f:
-        rule = tuple(ints(line))
+for s in lines():
+    rules.add(tuple(ints(s)))
 
-        if len(rule) == 0:
-            break
-        assert len(rule) == 2
+for s in lines():
+    a = ints(s)
 
-        rules.add(rule)
-
-    for line in f:
-        a = ints(line)
-
-        if check(a):
-            total += a[len(a) // 2]
+    if check(a):
+        total += a[len(a) // 2]
 
 print(total)
