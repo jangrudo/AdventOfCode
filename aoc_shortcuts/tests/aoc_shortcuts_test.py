@@ -1,4 +1,5 @@
 from aoc_shortcuts import *
+import aoc_shortcuts  # Allows to access private variables.
 
 class TestGminmax:
     def calculate_minmax(self, a):
@@ -92,3 +93,37 @@ class TestSubstr:
         assert ints(substr('10, 20 -> 88, 77', '->', None)) == [88, 77]
     def test_open_both(self):
         assert substr('', None, None) == ''
+
+class TestIsImmutableType:
+    def test_none(self):
+        assert aoc_shortcuts._is_immutable_type(None)
+    def test_true(self):
+        assert aoc_shortcuts._is_immutable_type(True)
+    def test_false(self):
+        assert aoc_shortcuts._is_immutable_type(False)
+
+    def test_int(self):
+        assert aoc_shortcuts._is_immutable_type(0)
+    def test_float(self):
+        assert aoc_shortcuts._is_immutable_type(math.inf)
+    def test_string(self):
+        assert aoc_shortcuts._is_immutable_type('')
+    def test_bytes(self):
+        assert aoc_shortcuts._is_immutable_type(b'\xff')
+
+    def test_list(self):
+        assert not aoc_shortcuts._is_immutable_type([])
+    def test_dict(self):
+        assert not aoc_shortcuts._is_immutable_type({})
+    def test_set(self):
+        assert not aoc_shortcuts._is_immutable_type(set())
+
+    def test_nested(self):
+        assert aoc_shortcuts._is_immutable_type((1, None, (frozenset(['abc']), 0.0)))
+    def test_xtuple(self):
+        Point = xtuple('x y z')
+        assert aoc_shortcuts._is_immutable_type(Point(1, 2, 3))
+
+    def test_xclass(self):
+        Point = xclass('x y z')
+        assert not aoc_shortcuts._is_immutable_type(Point(1, 2, 3))

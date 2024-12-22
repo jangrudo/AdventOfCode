@@ -35,7 +35,7 @@ def lines():
     line_strings_list = []
 
     for line in aoc_library_file:
-        s = line.rstrip()
+        s = line.rstrip('\n')
         if s == '':
             break
 
@@ -77,6 +77,7 @@ STEP = {'^' : (-1, 0), 'v': (1, 0), '<': (0, -1), '>': (0, 1)}
 
 TURN_LEFT  = {'^' : '<', 'v': '>', '<': 'v', '>': '^'}
 TURN_RIGHT = {'^' : '>', 'v': '<', '<': '^', '>': 'v'}
+TURN_BACK  = {'^' : 'v', 'v': '^', '<': '>', '>': '<'}
 
 # "m" means "map": a two-dimensional rectangular array of chars.
 def mread():
@@ -96,7 +97,14 @@ def msize(m):
 
 def mcreate(size, item_value):
     height, width = size
-    return [[deepcopy(item_value) for j in range(width)] for i in range(height)]
+
+    # Allow to fill the maps with empty lists and similar structures. For primitive data
+    # types, shave the overhead off by not running the deepcopy().
+
+    if _is_immutable_type(item_value):
+        return [[item_value for j in range(width)] for i in range(height)]
+    else:
+        return [[deepcopy(item_value) for j in range(width)] for i in range(height)]
 
 def mrange(m):
     return _MrangeIterator(m)
@@ -166,13 +174,12 @@ def xtuple(field_names_str):
         if not name.isidentifier():
             raise ValueError(f'{name!r} is not an identifier')
 
-    # Python seems to be OK with duplicate class names. Field list is only added to
-    # potentially simplify debugging.
+    # Duplicate class names are OK. Field list is only added to simplify debugging.
     xtuple_name = 'xtuple__' + '__'.join(field_names)
 
     xtuple_dict = {
         '_field_names': field_names,
-        '__slots__': (),  # This forbids setting custom attributes on tuple instances.
+        '__slots__': (),  # This forbids setting custom attributes on xtuple instances.
     }
 
     for i, name in enumerate(field_names):
@@ -203,13 +210,27 @@ def xclass(primary_member_names_str, **secondary_member_defaults):
         if not name.isidentifier():
             raise ValueError(f'{name!r} is not an identifier')
 
-    # Python seems to be OK with duplicate class names. Member list is only added to
-    # potentially simplify debugging.
+    # Allow to initialize members with empty lists and similar structures. This requires
+    # deepcopy() to properly copy the values, which adds a bit of overhead even for
+    # primitive data types which don't need it. Solve this by pre-computing in advance
+    # which members are guaranteed to be fine without the deepcopy().
+
+    secondary_immutable_defaults = {}
+    secondary_deepcopy_defaults = {}
+
+    for key, value in secondary_member_defaults.items():
+        if _is_immutable_type(value):
+            secondary_immutable_defaults[key] = value
+        else:
+            secondary_deepcopy_defaults[key] = deepcopy(value)
+
+    # Duplicate class names are OK. Member list is only added to simplify debugging.
     xclass_name = 'xclass__' + '__'.join(all_member_names)
 
     xclass_dict = {
         '_primary_member_names': primary_member_names,
-        '_secondary_member_defaults' : secondary_member_defaults,
+        '_secondary_immutable_defaults' : secondary_immutable_defaults,
+        '_secondary_deepcopy_defaults' : secondary_deepcopy_defaults,
 
         # This forbids adding more attributes to the class (unless it's subclassed), and
         # also improves performance a little bit.
@@ -251,7 +272,10 @@ class _XclassBase():
         for i, value in enumerate(arguments):
             setattr(self, self._primary_member_names[i], value)
 
-        for key, value in self._secondary_member_defaults.items():
+        for key, value in self._secondary_immutable_defaults.items():
+            setattr(self, key, value)
+
+        for key, value in self._secondary_deepcopy_defaults.items():
             setattr(self, key, deepcopy(value))
 
     def __repr__(self):
@@ -293,6 +317,19 @@ def _get_member_string(obj, name):
         value_string = str(value)
 
     return f'{name}={value_string}'
+
+# Return False if the type of obj might be an immutable one.
+def _is_immutable_type(obj):
+    if obj is None or any(isinstance(obj, t) for t in (bool, int, float, str, bytes)):
+        return True
+
+    if any(isinstance(obj, t) for t in (tuple, frozenset)):
+        # This may recurse, but it won't get into class instances, and it's not easy (if
+        # possible at all) to make a loop with immutable containers. Also, this function
+        # isn't expected to be called in tight loops, so this extra work should be fine.
+        return all(_is_immutable_type(item) for item in obj)
+
+    return False
 
 # ---- Iterators ------------------------------------------------------------------------
 # "u" means "unlimited".
