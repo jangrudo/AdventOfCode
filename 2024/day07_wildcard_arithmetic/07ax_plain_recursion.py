@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 total = 0
 
@@ -15,7 +15,7 @@ def iterate(result, size):
         iterate(result * a[size], size + 1)
     )
 
-for s in lines():
+for s in lines(f):
     a = ints(s)
     target = popfront(a)
 

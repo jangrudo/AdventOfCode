@@ -1,8 +1,8 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
-m = mread()
+m = mread(f)
 
 height, width = msize(m)
 

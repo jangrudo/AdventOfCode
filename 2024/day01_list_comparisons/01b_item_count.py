@@ -1,12 +1,12 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 left = []
 right = []
 
-for s in lines():
-    l, r = ints(s)
+for line in f:
+    l, r = ints(line)
     left.append(l)
     right.append(r)
 

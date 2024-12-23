@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 total = 0
 
@@ -11,7 +11,7 @@ def solve(xa, ya, xb, yb, xprize, yprize):
                 return 3 * i + j
     return 0
 
-while block := lines():
+while block := lines(f):
 
     xa, ya = ints(block[0])
     xb, yb = ints(block[1])

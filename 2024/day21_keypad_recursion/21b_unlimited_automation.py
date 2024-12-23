@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 PAD_0 = [list('789'), list('456'), list('123'), [None, '0', 'A'] ]
 PAD_1 = [[None, '^', 'A'], list('<v>')]
@@ -40,8 +40,6 @@ for d1 in STEP:
     for d2 in STEP:
         if d2 != d1 and d2 != TURN_BACK[d1]:
             path_cores.append(d1 + d2)
-
-print(path_cores)
 
 # Check if a path is valid for the given keypad (doesn't hit the empty slot).
 def is_valid_path(pad, path, start, finish):
@@ -149,11 +147,11 @@ def optimize(sequence):
 
 total = 0
 
-for s in lines():
+for s in lines(f):
     code = int(s.rstrip('A'))
 
     length = optimize(s)
-    print(s, length, code)
+    print(s, length)
     total += length * code
 
 print(total)

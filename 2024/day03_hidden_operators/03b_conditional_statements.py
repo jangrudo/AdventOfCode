@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 def count(s):
     total = 0
@@ -65,4 +65,4 @@ def count(s):
 
     return total
 
-print(count(' '.join(lines())))
+print(count(f.read()))

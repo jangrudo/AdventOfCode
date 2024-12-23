@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 rules = set()
 
@@ -19,10 +19,10 @@ def check(a):
             return False
     return True
 
-for s in lines():
+for s in lines(f):
     rules.add(tuple(ints(s)))
 
-for s in lines():
+for s in lines(f):
     a = ints(s)
 
     if not check(a):

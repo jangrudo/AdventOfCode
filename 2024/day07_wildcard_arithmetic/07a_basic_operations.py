@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 def check(target, a):
 
@@ -23,7 +23,7 @@ def check(target, a):
 
 total = 0
 
-for s in tqdm(lines()):
+for s in tqdm(lines(f)):
     a = ints(s)
     target = popfront(a)
 

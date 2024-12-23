@@ -1,8 +1,8 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
-a = ints(lines()[0])
+a = ints(f.readline())
 
 Node = xclass('value', nxt=None)
 

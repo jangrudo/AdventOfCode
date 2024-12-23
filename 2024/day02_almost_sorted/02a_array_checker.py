@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 count = 0
 
@@ -12,8 +12,8 @@ def is_safe(a):
             return False
     return True
 
-for s in lines():
-    a = ints(s)
+for line in f:
+    a = ints(line)
 
     if is_safe(a):
         count += 1

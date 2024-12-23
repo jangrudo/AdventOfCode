@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 def solvable(s):
     found = [False] * (len(s) + 1)
@@ -14,12 +14,12 @@ def solvable(s):
 
     return found[len(s)]
 
-patterns = lines()[0].split(', ')
+patterns = lines(f)[0].split(', ')
 
 count = 0
 
-for line in tqdm(lines()):
-    if solvable(line):
+for s in tqdm(lines(f)):
+    if solvable(s):
         count += 1
 
 print(count)

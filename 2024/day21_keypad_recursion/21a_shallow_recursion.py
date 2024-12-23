@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 PAD_0 = [list('789'), list('456'), list('123'), [None, '0', 'A'] ]
 PAD_1 = [[None, '^', 'A'], list('<v>')]
@@ -125,11 +125,11 @@ def optimize(sequence):
 
 total = 0
 
-for s in lines():
+for s in lines(f):
     code = int(s.rstrip('A'))
 
     length = optimize(s)
-    print(s, length, code)
+    print(s, length)
     total += length * code
 
 print(total)

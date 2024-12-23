@@ -2,11 +2,11 @@
 
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
-initial_reg = [ints(s)[0] for s in lines()]
+initial_reg = [ints(s)[0] for s in lines(f)]
 
-program = ints(lines()[0])
+program = ints(f.readline())
 
 # The program in the input files seems to consist of a single loop, which converts the
 # value in register `a` to some output value (without using any extra data, and without

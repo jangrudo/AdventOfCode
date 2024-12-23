@@ -1,8 +1,8 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
-dense = [int(c) for c in lines()[0]]
+dense = [int(c) for c in f.readline().strip()]
 
 a = []
 

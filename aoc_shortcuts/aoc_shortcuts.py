@@ -18,23 +18,11 @@ import pathlib
 import sys
 
 # ---- Parsing --------------------------------------------------------------------------
-aoc_library_file = None
-
-def open_input(input_file_path):
-    global aoc_library_file
-
-    if aoc_library_file is not None:
-        aoc_library_file.close()
-
-    aoc_library_file = open(input_file_path)
-
 # Read lines from the input file, newlines stripped, until the nearest blank line or EOF.
-def lines():
-    assert aoc_library_file is not None
-
+def lines(f):
     line_strings_list = []
 
-    for line in aoc_library_file:
+    for line in f:
         s = line.rstrip('\n')
         if s == '':
             break
@@ -80,9 +68,9 @@ TURN_RIGHT = {'^' : '>', 'v': '<', '<': '^', '>': 'v'}
 TURN_BACK  = {'^' : 'v', 'v': '^', '<': '>', '>': '<'}
 
 # "m" means "map": a two-dimensional rectangular array of chars.
-def mread():
+def mread(f):
     m = []
-    for s in lines():
+    for s in lines(f):
         m.append(list(s))
     return m
 

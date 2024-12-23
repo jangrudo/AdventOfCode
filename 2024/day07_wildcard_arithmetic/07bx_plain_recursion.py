@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 total = 0
 
@@ -16,7 +16,7 @@ def iterate(result, size):
         iterate(int(str(result) + str(a[size])), size + 1)
     )
 
-for s in tqdm(lines()):
+for s in tqdm(lines(f)):
     a = ints(s)
     target = popfront(a)
 

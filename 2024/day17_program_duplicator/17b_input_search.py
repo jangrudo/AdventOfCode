@@ -1,10 +1,10 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
-lines()  # Ignore. Registers b and c seem to be always set to zero.
+lines(f)  # Ignore. Registers b and c seem to be always set to zero.
 
-program = ints(lines()[0])
+program = ints(f.readline())
 
 # The program seems to be nearly identical across various inputs, with 2 key parameters.
 assert program[0 : 2] == [2, 4]       # b = a % 8

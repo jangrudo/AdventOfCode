@@ -1,8 +1,8 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
-falls = [tuple(ints(s)) for s in lines()]
+falls = [tuple(ints(line)) for line in f]
 
 m = mcreate((71, 71), '.')
 

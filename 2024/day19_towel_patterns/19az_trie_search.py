@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 TrieNode = xclass('', leaf=False, children={})
 
@@ -37,9 +37,9 @@ def solvable(s):
 
     return found[len(s)]
 
-for pattern in lines()[0].split(', '):
+for pattern in lines(f)[0].split(', '):
     trie_add(root, pattern)
 
-count = sum(solvable(s) for s in lines())
+count = sum(solvable(s) for s in lines(f))
 
 print(count)

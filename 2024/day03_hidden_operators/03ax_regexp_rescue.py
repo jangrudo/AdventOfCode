@@ -1,10 +1,8 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
-s = ' '.join(lines())
-
-ops = re.findall(r'mul\(\d{1,3},\d{1,3}\)', s)
+ops = re.findall(r'mul\(\d{1,3},\d{1,3}\)', f.read())
 
 total = 0
 

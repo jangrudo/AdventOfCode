@@ -1,13 +1,13 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 width = 101
 height = 103
 
 Robot = xclass('x y vx vy')
 
-robots = [Robot(*ints(s)) for s in lines()]
+robots = [Robot(*ints(line)) for line in f]
 
 size = len(robots)
 

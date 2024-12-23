@@ -1,10 +1,10 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
-m = mread()
+m = mread(f)
 
-directions = ''.join(lines())
+directions = ''.join(lines(f))
 
 for i in range(len(m)):
     row = ''.join(m[i])

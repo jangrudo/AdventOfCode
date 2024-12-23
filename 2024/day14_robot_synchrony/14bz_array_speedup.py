@@ -1,6 +1,6 @@
 from aoc_shortcuts import *
 
-open_input('input')
+f = open('input')
 
 import numpy
 
@@ -9,7 +9,7 @@ height = 103
 
 Robot = xtuple('x y vx vy')
 
-robots = [Robot(*ints(s)) for s in lines()]
+robots = [Robot(*ints(line)) for line in f]
 
 x = numpy.array([r.x for r in robots], numpy.int32)
 y = numpy.array([r.y for r in robots], numpy.int32)
