@@ -1,7 +1,5 @@
 from aoc_shortcuts import *
 
-import random
-
 f = open('input')
 
 lines(f)  # Ignore input values.
@@ -9,103 +7,26 @@ lines(f)  # Ignore input values.
 Rule = xclass('l r op target')
 
 rules = []
-allnodes = set()
+nodes = set()
 
 for s in lines(f):
     l, op, r, _, target = s.split()
     rules.append(Rule(l, r, op, target))
 
-    allnodes.add(l)
-    allnodes.add(r)
-    allnodes.add(target)
+    nodes.update([l, r, target])
 
 BITS = 45
-
-def set_values(values, prefix, number):
-    bit = 0
-    for bit in range(BITS):
-        key = f'{prefix}{bit:02}'
-        values[key] = 1 if (number & (2 ** bit) != 0) else 0
-
-def simulate(x, y):
-
-    values = {}
-
-    set_values(values, 'x', x)
-    set_values(values, 'y', y)
-
-    while len(values) < len(allnodes):
-        updated = False
-        for rule in rules:
-            if rule.target not in values and rule.l in values and rule.r in values:
-
-                if rule.op == 'AND':
-                    values[rule.target] = values[rule.l] & values[rule.r]
-                elif rule.op == 'OR':
-                    values[rule.target] = values[rule.l] | values[rule.r]
-                elif rule.op == 'XOR':
-                    values[rule.target] = values[rule.l] ^ values[rule.r]
-                else:
-                    assert False
-
-                updated = True
-
-        if not updated:
-            return None
-
-    number = 0
-
-    for bit in range(BITS + 1):
-        key = f'z{bit:02}'
-        if key in values:
-            number += (2 ** bit) * values[key]
-
-    return number
-
-def get_random(maxbits):
-    return random.randint(0, 2 ** maxbits - 1)
-
-def test_circuit():
-
-    # A few random tries seems enough to detect the flaws we find in the input files.
-    # (The most challenging to find would be errors near the most significant bit, but
-    # even for those we'd get 90% success rate with 100 checks).
-    for i in range(100):
-        x = get_random(BITS)
-        y = get_random(BITS)
-        z = simulate(x, y)
-
-        if x + y != z:
-            return False
-
-    return True
-
-def swap_rules(target1, target2):
-    r1 = [rule for rule in rules if rule.target == target1]
-    r2 = [rule for rule in rules if rule.target == target2]
-
-    assert len(r1) == 1
-    assert len(r2) == 1
-
-    rule1 = r1[0]
-    rule2 = r2[0]
-
-    target1 = rule1.target
-    target2 = rule2.target
-
-    rule1.target = target2
-    rule2.target = target1
 
 # Manual inspection of the input reveals a highly regular design, which processes lower
 # bits first, and only uses data from one previous step to compute the next output bit.
 #
 # For each pair of input nodes ("x" and "y"), a pair of "and" and "xor" nodes is computed
-# first. Then, we also have a "carry" flag, which indicates if the result computed so far
-# fits into the current bit space, or an overflow occurs. It's computed as
+# first. Then, we also have a "carry" flag which is set to 1 if the result computed so
+# far doesn't fit into the current bit space, and an overflow occurs. It's computed as
 #
 #   `carry[i] = and[i] | (xor[i] & carry[i-1])`
 #
-# where `(xor[i] & carry[i-1])` is another intermediate node used per bit.
+# where `(xor[i] & carry[i-1])` is another ("extra") intermediate node used per bit.
 #
 # The value of the output "z" node is computed as
 #
@@ -117,91 +38,157 @@ def swap_rules(target1, target2):
 # corresponding "and" node is used instead), and the last bit 45, for which the output is
 # taken directly from the last "carry" flag, as there are no more inputs to xor it with.
 #
-# This means that "XOR" operators can either process a pair of input nodes ("x" and "y"),
-# or generate an output "z" bit (except for the last one, "z45", which is generated with
-# an "OR" operator), or both (for output "z00"). However, an "XOR" can never take an
-# intermediate node as input, and produce another intermediate node as output.
-#
-# On the other hand, output bits (except for "z45") can never be produced by rules other
-# than "XOR".
-#
-# Luckily, there are exactly 6 rules in the input which break one of the two above
-# mentioned laws (3 rules per law). Each of the rules in these two groups only fits into
-# the opposite group, and doesn't fit anywhere else (provided that each rule is only
-# allowed to be swapped once). Therefore, these 6 "flawed" rules form 3 pairs, with each
-# pair spanning both groups, so the total number of possible pair triplets is 6.
-#
-# Now, we only need to find one missing swap, which is doable by trying them all.
+# We'll try to unwind this design (starting from the least significant bits), see where
+# it's broken, and try to correct the errors on the fly.
 
-flawed_middles = []
+def fix_circuit():
+    swapped_nodes = []  # List of rule targets swapped so far.
 
-for rule in rules:
-    if (
-        rule.op == 'XOR' and
-        rule.l[0] not in 'xy' and rule.r[0] not in 'xy' and rule.target[0] != 'z'
-    ):
-        print(rule)
-        flawed_middles.append(rule.target)
+    mapping = {}  # A dictionary mapping logical node names to real names.
 
-flawed_zets = []
+    # The names of the input nodes are already quite logical.
+    for node in nodes:
+        if node[0] in 'xy':
+            mapping[node] = node
 
-for rule in rules:
-    if rule.op != 'XOR' and rule.target[0] == 'z' and rule.target != 'z45':
-        print(rule)
-        flawed_zets.append(rule.target)
+    # On the first tier, we have "and" and "xor" nodes, directly connected to the inputs.
+    for rule in rules:
+        if rule.l[0] in 'xy' or rule.r[0] in 'xy':
+            # Inputs from both numbers should appear in the same rule (in any order).
+            assert set([rule.l[0], rule.r[0]]) == {'x', 'y'}
+            assert rule.l[1:] == rule.r[1:]
 
-assert len(flawed_middles) == 3
-assert len(flawed_zets) == 3
+            if rule.op == 'AND':
+                mapping['and' + rule.l[1:]] = rule.target
+            elif rule.op == 'XOR':
+                mapping['xor' + rule.l[1:]] = rule.target
+            else:
+                assert False
 
-# Each rule can be uniquely identified by its target.
-alltargets = sorted(list(set(rule.target for rule in rules)))
+    # For bit 0, some nodes shall also have a second logical name.
+    mapping['carry00'] = mapping['and00']
+    mapping['z00'] = mapping['xor00']
 
-for i in range(3):
-    for j in range(3):
-        for k in range(3):
-            if len(set([i, j, k])) != 3:
-                continue
+    for bit in range(1, BITS):
+        prev = bit - 1
 
-            swap_rules(flawed_middles[0], flawed_zets[i])
-            swap_rules(flawed_middles[1], flawed_zets[j])
-            swap_rules(flawed_middles[2], flawed_zets[k])
+        xor_cur = f'xor{bit:02}'  # Names of the "xor" and "and" nodes (already mapped).
+        and_cur = f'and{bit:02}'
+        carry_prev = f'carry{prev:02}'  # Previous "carry" node (already mapped).
+        carry_cur = f'carry{bit:02}'    # "carry" node for the current bit.
+        extra_cur = f'extra{bit:02}'    # "extra" node for the current bit.
+        z_cur = f'z{bit:02}'            # Output node for the current bit.
 
-            progress = tqdm(  # Calculate the toal pair count for steady progress.
-                total = len(alltargets) * (len(alltargets) - 1) // 2,
-                desc = str((i, j, k))
+        # First, we need to map the "extra" node for the current bit ("carry" needs it).
+        for rule in rules:
+            if (
+                rule.op == 'AND' and
+                set([rule.l, rule.r]) == set([mapping[xor_cur], mapping[carry_prev]])
+            ):
+                mapping[extra_cur] = rule.target
+                break  # Only one such node can exist if the design is correct.
+        else:
+            # If the rule is not found, it means that one (or both) of its operand nodes
+            # is incorrectly mapped. Assuming that only one of the operand nodes can be
+            # swapped in any given rule (which seems to hold across available input
+            # files), try to find out which of the operand nodes could be replaced with
+            # something else. To do this, search for the "AND" rule which has exactly one
+            # of its arguments matching either of the two nodes that we have here.
+            #
+            # If the search succeeds, swap the two nodes (and update the mapping).
+            node1, node2, target = find_swap(
+                'AND', mapping[xor_cur], mapping[carry_prev]
             )
+            mapping[extra_cur] = target
+            swap_rules(mapping, node1, node2)
+            swapped_nodes.extend([node1, node2])
 
-            for ii1 in range(len(alltargets) - 1):
-                for ii2 in range(ii1 + 1, len(alltargets)):
-                    node1 = alltargets[ii1]
-                    node2 = alltargets[ii2]
+        # Similarly, search for the "carry" node (and correct the circuit if needed).
+        for rule in rules:
+            if (
+                rule.op == 'OR' and
+                set([rule.l, rule.r]) == set([mapping[and_cur], mapping[extra_cur]])
+            ):
+                mapping[carry_cur] = rule.target
+                break
+        else:
+            node1, node2, target = find_swap(
+                'OR', mapping[and_cur], mapping[extra_cur]
+            )
+            mapping[carry_cur] = target
+            swap_rules(mapping, node1, node2)
+            swapped_nodes.extend([node1, node2])
 
-                    if (
-                        node1 not in flawed_middles and node1 not in flawed_zets and
-                        node2 not in flawed_middles and node2 not in flawed_zets
-                    ):
-                        swap_rules(node1, node2)
+        # Finally, do the same for the output ("z") node.
+        for rule in rules:
+            if (
+                rule.op == 'XOR' and
+                set([rule.l, rule.r]) == set([mapping[xor_cur], mapping[carry_prev]])
+            ):
+                mapping[z_cur] = rule.target
+                break
+        else:
+            node1, node2, target = find_swap(
+                'XOR', mapping[xor_cur], mapping[carry_prev]
+            )
+            mapping[z_cur] = target
+            swap_rules(mapping, node1, node2)
+            swapped_nodes.extend([node1, node2])
 
-                        if test_circuit():
-                            progress.close()
+    # If we've got here, it means the entire design has been untangled, and all the nodes
+    # mapped. However, we haven't checked yet if output mappings are actually correct.
+    # Luckily, it looks like in available input files output nodes are never swapped.
+    for bit in range(BITS):
+        z_cur = f'z{bit:02}'
+        assert mapping[z_cur] == z_cur
 
-                            print(
-                                (flawed_middles[0], flawed_zets[i]),
-                                (flawed_middles[1], flawed_zets[j]),
-                                (flawed_middles[2], flawed_zets[k]),
-                                (node1, node2)
-                            )
-                            print(','.join(sorted(
-                                flawed_middles + flawed_zets + [node1, node2]
-                            )))
-                            exit()
+    # The most significant bit of the output should be mapped to the last "carry" flag.
+    assert mapping['carry44'] == 'z45'
 
-                        swap_rules(node1, node2)  # Undo the swap made above.
+    return swapped_nodes
 
-                    progress.update(1)
+Swap = xtuple('node1 node2 target')
 
-            swap_rules(flawed_middles[0], flawed_zets[i])  # Undo the swaps made above.
-            swap_rules(flawed_middles[1], flawed_zets[j])
-            swap_rules(flawed_middles[2], flawed_zets[k])
+# Search for a rule which contains exactly one of the required operands.
+def find_swap(op, required1, required2):
 
-            progress.close()
+    candidates = []
+
+    for rule in rules:
+        if rule.op == op:
+            if rule.l == required1:
+                candidates.append(Swap(rule.r, required2, rule.target))
+            elif rule.r == required1:
+                candidates.append(Swap(rule.l, required2, rule.target))
+            elif rule.l == required2:
+                candidates.append(Swap(rule.r, required1, rule.target))
+            elif rule.r == required2:
+                candidates.append(Swap(rule.l, required1, rule.target))
+
+    assert len(candidates) == 1
+
+    swap = candidates[0]
+    print((swap.node1, swap.node2))
+    return swap
+
+# Update the mapping dictionary after having swapped two given nodes.
+def swap_mappings(mapping, node1, node2):
+
+    # Find logical names pointing to node1 and node2, if any.
+    for source in mapping:
+        if mapping[source] == node1:
+            mapping[source] = node2
+        elif mapping[source] == node2:
+            mapping[source] = node1
+
+def swap_rules(mapping, target1, target2):
+    rule1 = [r for r in rules if r.target == target1][0]
+    rule2 = [r for r in rules if r.target == target2][0]
+
+    rule1.target, rule2.target = rule2.target, rule1.target
+
+    swap_mappings(mapping, target1, target2)
+
+swapped_nodes = fix_circuit()
+
+print(','.join(sorted(swapped_nodes)))

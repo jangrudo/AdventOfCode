@@ -2,8 +2,6 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-total = 0
-
 def solve(xa, ya, xb, yb, xprize, yprize):
 
     iup =  yb * xprize - xb * yprize
@@ -55,11 +53,11 @@ def solve(xa, ya, xb, yb, xprize, yprize):
 
     return 3 * i + j
 
-while block := lines(f):
+total = 0
 
-    xa, ya = ints(block[0])
-    xb, yb = ints(block[1])
-    xprize, yprize = ints(block[2])
+while a := ints(f):
+
+    xa, ya, xb, yb, xprize, yprize = a
 
     xprize += 10000000000000
     yprize += 10000000000000

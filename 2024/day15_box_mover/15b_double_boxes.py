@@ -12,7 +12,7 @@ for i in range(len(m)):
 
     m[i] = list(c for c in row)
 
-i, j = mfind(m, '@')[0]
+i, j = mfind(m, '@')
 
 # Move a box in the given direction. Return False if it's not possible.
 def move_box(i, j, di, dj):
@@ -108,6 +108,6 @@ for direction in directions:
 
 mprint(m)
 
-total = sum(100 * i + j for i, j in mfind(m, '['))
+total = sum(100 * i + j for i, j in mfindall(m, '['))
 
 print(total)

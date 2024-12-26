@@ -17,7 +17,9 @@ for s in lines(f):
     l, op, r, _, target = s.split()
     rules.append(Rule(l, r, op, target))
 
-    nodes.update([l, r, target])
+    nodes.add(l)
+    nodes.add(r)
+    nodes.add(target)
 
 while len(values) < len(nodes):
     for rule in rules:
@@ -32,9 +34,15 @@ while len(values) < len(nodes):
             else:
                 assert False
 
-zets = sorted([n for n in nodes if n.startswith('z')])
+zets = sorted([node for node in values if node.startswith('z')])
 
-# Reverse the string so that most significant bits come first.
-bits = ''.join(str(values[n]) for n in zets)[::-1]
+maxbit = int(zets[-1].lstrip('z'))
 
-print(int(bits, base=2))
+number = 0
+power = 1
+for bit in range(maxbit + 1):
+    key = f'z{bit:02d}'
+    number += power * values[key]
+    power *= 2
+
+print(number)

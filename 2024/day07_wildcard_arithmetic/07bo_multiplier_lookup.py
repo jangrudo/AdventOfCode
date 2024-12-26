@@ -20,9 +20,8 @@ def iterate(result, size):
 
 total = 0
 
-for s in tqdm(lines(f)):
-    a = ints(s)
-    target = popfront(a)
+for a in tqdm(lints(f)):
+    target = a.pop(0)
 
     scaler = [10 ** len(str(x)) for x in a]
 

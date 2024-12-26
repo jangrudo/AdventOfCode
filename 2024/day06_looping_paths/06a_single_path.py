@@ -4,7 +4,7 @@ f = open('input')
 
 m = mread(f)
 
-i, j = mfind(m, '^')[0]
+i, j = mfind(m, '^')
 
 direction = '^'
 

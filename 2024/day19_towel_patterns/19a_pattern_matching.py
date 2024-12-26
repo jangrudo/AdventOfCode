@@ -2,6 +2,8 @@ from aoc_shortcuts import *
 
 f = open('input')
 
+patterns = oneline(f).split(', ')
+
 def solvable(s):
     found = [False] * (len(s) + 1)
     found[0] = True
@@ -13,7 +15,5 @@ def solvable(s):
                 break
 
     return found[len(s)]
-
-patterns = lines(f)[0].split(', ')
 
 print(sum(solvable(s) for s in tqdm(lines(f))))

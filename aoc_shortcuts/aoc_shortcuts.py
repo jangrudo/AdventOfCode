@@ -11,6 +11,7 @@ import re
 import string
 
 import atexit
+import collections.abc
 import datetime
 import operator
 import os
@@ -18,7 +19,8 @@ import pathlib
 import sys
 
 # ---- Parsing --------------------------------------------------------------------------
-# Read lines from the input file, newlines stripped, until the nearest blank line or EOF.
+# Read a block of lines from the input file (stop after having read an empty line, or
+# upon the EOF). Strip trailing newlines, and return the list of collected strings.
 def lines(f):
     line_strings_list = []
 
@@ -31,14 +33,34 @@ def lines(f):
 
     return line_strings_list
 
-def popfront(a):
-    x = a[0]
-    del a[0]
-    return x
+# Assuming an input file block consists of a single line, return this line as a string.
+def oneline(f):
+    block = lines(f)
+    assert len(block) == 1
+    return block[0]
 
 # Idea stolen from here: https://blog.vero.site/post/advent-leaderboard
-def ints(s):
-    return [int(x) for x in re.findall(r'-?\d+', s)]
+#
+# Return the list of integers contained within a string (or within an entire file block).
+def ints(string_or_iterable):
+
+    if isinstance(string_or_iterable, str):
+        return [int(x) for x in re.findall(r'-?\d+', string_or_iterable)]
+
+    else:
+        a = []
+        for s in lines(string_or_iterable):
+            a.extend(ints(s))
+        return a
+
+# "l" means either "list of ints()", or "ints() for each line", or both.
+def lints(f):
+    ablock = []
+
+    for s in lines(f):
+        ablock.append(ints(s))
+
+    return ablock
 
 # This one has never been used so far.
 def substr(s, substring_left, substring_right):
@@ -142,11 +164,25 @@ def mfits(m, i, j):
 
     return 0 <= i < height and 0 <= j < width
 
-def mfind(m, c_sequence):
-    return [(i, j) for i, j in mrange(m) if m[i][j] in c_sequence]
+def mfind(m, item_sequence):
+    if not isinstance(item_sequence, collections.abc.Iterable):
+        item_sequence = [item_sequence]
 
-def mcount(m, c_sequence):
-    return sum(1 for i, j in mrange(m) if m[i][j] in c_sequence)
+    for i, j in mrange(m):
+        if m[i][j] in item_sequence:
+            return (i, j)
+
+def mfindall(m, item_sequence):
+    if not isinstance(item_sequence, collections.abc.Iterable):
+        item_sequence = [item_sequence]
+
+    return [(i, j) for i, j in mrange(m) if m[i][j] in item_sequence]
+
+def mcount(m, item_sequence):
+    if not isinstance(item_sequence, collections.abc.Iterable):
+        item_sequence = [item_sequence]
+
+    return sum(1 for i, j in mrange(m) if m[i][j] in item_sequence)
 
 # ---- Structures -----------------------------------------------------------------------
 # Similar to collections.namedtuple, but doesn't require to type the class name twice.

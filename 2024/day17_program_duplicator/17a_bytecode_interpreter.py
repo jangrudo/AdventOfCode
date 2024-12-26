@@ -2,9 +2,9 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-reg = [ints(s)[0] for s in lines(f)]
+reg = [a[0] for a in lints(f)]
 
-program = ints(f.readline())
+program = ints(f)
 
 def get_combo(arg):
     if arg <= 3:

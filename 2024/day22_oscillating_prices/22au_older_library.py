@@ -10,4 +10,9 @@ def simulate(n):
 
     return n
 
-print(sum(simulate(n) for n in tqdm(ints(f))))
+total = 0
+
+for s in tqdm(lines(f)):
+    total += simulate(int(s))
+
+print(total)

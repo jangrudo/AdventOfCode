@@ -6,7 +6,7 @@ m = mread(f)
 
 directions = ''.join(lines(f))
 
-i, j = mfind(m, '@')[0]
+i, j = mfind(m, '@')
 
 for direction in directions:
     di, dj = STEP[direction]
@@ -35,6 +35,6 @@ for direction in directions:
 
 mprint(m)
 
-total = sum(100 * i + j for i, j in mfind(m, 'O'))
+total = sum(100 * i + j for i, j in mfindall(m, 'O'))
 
 print(total)

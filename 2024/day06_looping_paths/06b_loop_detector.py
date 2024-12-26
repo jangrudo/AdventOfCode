@@ -6,7 +6,7 @@ m = mread(f)
 
 height, width = msize(m)
 
-i0, j0 = mfind(m, '^')[0]
+i0, j0 = mfind(m, '^')
 
 i, j = i0, j0
 direction = '^'

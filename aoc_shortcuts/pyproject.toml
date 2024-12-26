@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aoc_shortcuts"  # Name chosen to prevent collisions with PyPI.
-version = "2024.12.22"
+version = "2024.12.25"
 dependencies = ["numpy", "sortedcontainers", "tqdm", "pytest"]
 authors = [{name = "Jan Grudo"}]
 license = {text = "Public domain"}

@@ -9,7 +9,7 @@ letters = string.ascii_letters + string.digits
 marks = deepcopy(m)
 
 for c in letters:
-    points = mfind(m, c)
+    points = mfindall(m, c)
 
     for p1 in points:
         for p2 in points:

@@ -5,8 +5,8 @@ with open('input') as f:
 
 Node = xtuple('i j direction')
 
-i0, j0 = mfind(m, 'S')[0]
-fi, fj = mfind(m, 'E')[0]
+i0, j0 = mfind(m, 'S')
+fi, fj = mfind(m, 'E')
 
 def next_nodes(node, length):
     nodes = [

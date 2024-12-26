@@ -5,8 +5,8 @@ f = open('input')
 m = mread(f)
 
 def shortest_path(m):
-    start = mfind(m, 'S')[0]
-    finish = mfind(m, 'E')[0]
+    start = mfind(m, 'S')
+    finish = mfind(m, 'E')
 
     q = {start}
     visited = {start}

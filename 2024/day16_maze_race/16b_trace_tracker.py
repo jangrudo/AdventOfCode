@@ -6,8 +6,8 @@ m = mread(f)
 
 Node = xtuple('i j d')
 
-i0, j0 = mfind(m, 'S')[0]
-fi, fj = mfind(m, 'E')[0]
+i0, j0 = mfind(m, 'S')
+fi, fj = mfind(m, 'E')
 
 def next_nodes(node, length):
     yield (Node(node.i, node.j, TURN_LEFT[node.d]), length + 1000)
@@ -62,7 +62,7 @@ for tail in urange():
 
 reachable = set((node.i, node.j) for node in painted)
 
-for i, j in reachable:
+for i, j in reachable:  # This is a purely optional pretty-printer.
     m[i][j] = 'O'
 mprint(m)
 

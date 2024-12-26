@@ -2,7 +2,7 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-a = Counter(ints(f.readline()))
+a = Counter(ints(f))
 
 for iteration in range(25):
 

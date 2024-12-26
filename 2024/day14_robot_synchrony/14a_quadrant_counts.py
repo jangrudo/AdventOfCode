@@ -7,7 +7,7 @@ height = 103
 
 Robot = xclass('x y vx vy')
 
-robots = [Robot(*ints(line)) for line in f]
+robots = [Robot(*a) for a in lints(f)]
 
 for iteration in range(100):
     for r in robots:

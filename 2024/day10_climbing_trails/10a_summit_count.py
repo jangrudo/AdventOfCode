@@ -22,7 +22,7 @@ def iterate(i, j):
 
 count = 0
 
-for i, j in mfind(m, [0]):
+for i, j in mfindall(m, 0):
     count += len(iterate(i, j))
 
 print(count)

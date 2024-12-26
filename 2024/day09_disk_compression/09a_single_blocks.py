@@ -2,7 +2,7 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-dense = [int(c) for c in f.readline().strip()]
+dense = [int(c) for c in oneline(f)]
 
 a = []
 

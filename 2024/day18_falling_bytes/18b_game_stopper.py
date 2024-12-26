@@ -2,7 +2,7 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-falls = [tuple(ints(line)) for line in f]
+falls = [tuple(a) for a in lints(f)]
 
 m = mcreate((71, 71), '.')
 

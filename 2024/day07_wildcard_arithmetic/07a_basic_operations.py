@@ -15,9 +15,8 @@ def iterate(result, size):
 
 total = 0
 
-for s in lines(f):
-    a = ints(s)
-    target = popfront(a)
+for a in lints(f):
+    target = a.pop(0)
 
     if iterate(a[0], 1):
         total += target

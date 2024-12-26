@@ -12,7 +12,7 @@ def mark(i, j):
         marks[i][j] = '#'
 
 for c in letters:
-    points = mfind(m, c)
+    points = mfindall(m, c)
 
     for a in range(len(points) - 1):
         for b in range(a + 1, len(points)):

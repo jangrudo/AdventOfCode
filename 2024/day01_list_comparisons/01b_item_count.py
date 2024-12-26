@@ -2,12 +2,6 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-left = []
-right = []
-
-for line in f:
-    l, r = ints(line)
-    left.append(l)
-    right.append(r)
+left, right = zip(*lints(f))
 
 print(sum(x * right.count(x) for x in left))

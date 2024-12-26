@@ -37,7 +37,7 @@ def solvable(s):
 
     return found[len(s)]
 
-for pattern in lines(f)[0].split(', '):
+for pattern in oneline(f).split(', '):
     trie_add(root, pattern)
 
 print(sum(solvable(s) for s in lines(f)))

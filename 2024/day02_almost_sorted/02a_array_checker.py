@@ -10,4 +10,4 @@ def is_safe(a):
             return False
     return True
 
-print(sum(is_safe(ints(line)) for line in f))
+print(sum(is_safe(a) for a in lints(f)))

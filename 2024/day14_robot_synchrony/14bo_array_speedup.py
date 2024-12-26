@@ -9,7 +9,7 @@ height = 103
 
 Robot = xtuple('x y vx vy')
 
-robots = [Robot(*ints(line)) for line in f]
+robots = [Robot(*a) for a in lints(f)]
 
 x = numpy.array([r.x for r in robots], numpy.int32)
 y = numpy.array([r.y for r in robots], numpy.int32)

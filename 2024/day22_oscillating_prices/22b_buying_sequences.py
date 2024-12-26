@@ -28,7 +28,7 @@ def simulate(n):
     for seq in price:
         total[seq] += price[seq]
 
-for s in tqdm(lines(f)):
-    simulate(int(s))
+for n in tqdm(ints(f)):
+    simulate(n)
 
 print(max(total.values()))

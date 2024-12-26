@@ -4,9 +4,9 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-initial_reg = [ints(s)[0] for s in lines(f)]
+initial_reg = [a[0] for a in lints(f)]
 
-program = ints(f.readline())
+program = ints(f)
 
 # The program in the input files seems to consist of a single loop, which converts the
 # value in register `a` to some output value (without using any extra data, and without
