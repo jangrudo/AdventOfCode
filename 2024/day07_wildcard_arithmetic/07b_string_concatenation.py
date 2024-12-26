@@ -2,29 +2,17 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-def check(target, a):
+def iterate(result, size):
+    if result > target:
+        return False
+    if size == len(a):
+        return result == target
 
-    for mask in range(3 ** (len(a) - 1)):
-        result = a[0]
-
-        for i in range(1, len(a)):
-            flag = mask % 3
-            if flag == 0:
-                result += a[i]
-            elif flag == 1:
-                result *= a[i]
-            else:
-                result = int(str(result) + str(a[i]))
-            mask //= 3
-
-            # Doesn't really help much.
-            if result > target:
-                break
-
-        if result == target:
-            return True
-
-    return False
+    return (
+        iterate(result + a[size], size + 1) or
+        iterate(result * a[size], size + 1) or
+        iterate(int(str(result) + str(a[size])), size + 1)
+    )
 
 total = 0
 
@@ -32,7 +20,7 @@ for s in tqdm(lines(f)):
     a = ints(s)
     target = popfront(a)
 
-    if check(target, a):
+    if iterate(a[0], 1):
         total += target
 
 print(total)

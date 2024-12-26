@@ -14,7 +14,7 @@ for s in lines(f):
 
 nodes = sorted(list(nodes))
 
-largest = set()
+largest = []
 
 for i in range(len(nodes) - 2):
     for j in range(i + 1, len(nodes) - 1):
@@ -24,23 +24,22 @@ for i in range(len(nodes) - 2):
                     (nodes[i], nodes[k]) in connected and
                     (nodes[j], nodes[k]) in connected
                 ):
-                    largest.add(tuple(sorted([nodes[i], nodes[j], nodes[k]])))
+                    largest.append((i, j, k))
 
 def enlarge(largest):
-    nlargest = set()
+    nlargest = []
 
-    for big in tqdm(largest, desc=f'Subgraphs {len(list(largest)[0])} found '):
+    for big in tqdm(largest, desc=f'Subgraphs {len(largest[0])} found '):
 
-        for node in nodes:
-            if node not in big:
-                node_connected = True
-                for i in range(len(big)):
-                    if (big[i], node) not in connected:
-                        node_connected = False
-                        break
+        for i in range(big[-1] + 1, len(nodes)):
+            node_connected = True
+            for k in big:
+                if (nodes[k], nodes[i]) not in connected:
+                    node_connected = False
+                    break
 
-                if node_connected:
-                    nlargest.add(tuple(sorted(list(big) + [node])))
+            if node_connected:
+                nlargest.append(big + (i,))
 
     return nlargest
 
@@ -50,4 +49,4 @@ while True:
         break
     largest = nlargest
 
-print(','.join(s for s in list(largest)[0]))
+print(','.join(nodes[k] for k in largest[0]))

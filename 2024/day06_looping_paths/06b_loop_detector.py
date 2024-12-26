@@ -8,9 +8,24 @@ height, width = msize(m)
 
 i0, j0 = mfind(m, '^')[0]
 
+i, j = i0, j0
+direction = '^'
+
+while True:
+    m[i][j] = 'X'
+
+    ni, nj = mmove(i, j, direction)
+
+    if not mfits(m, ni, nj):
+        break
+
+    if m[ni][nj] == '#':
+        direction = TURN_RIGHT[direction]
+    else:
+        i, j = ni, nj
+
 def has_loop(m):
     i, j = i0, j0
-
     direction = '^'
 
     visited = set()
@@ -25,7 +40,7 @@ def has_loop(m):
         if m[ni][nj] == '#':
             direction = TURN_RIGHT[direction]
 
-            # Only checking the corners speeds up the processing a bit.
+            # Only checking the corners is enough for loop detection.
             if (i, j, direction) in visited:
                 return True
             visited.add((i, j, direction))
@@ -35,13 +50,16 @@ def has_loop(m):
 
 count = 0
 
+m[i0][j0] = '.'
+
 for i, j in tqdm(mrange(m)):
-    if m[i][j] == '.':
+    # Only consider obstacles which could alter the original path.
+    if m[i][j] == 'X':
         m[i][j] = '#'
 
         if has_loop(m):
             count += 1
 
-        m[i][j] = '.'
+        m[i][j] = 'X'
 
 print(count)

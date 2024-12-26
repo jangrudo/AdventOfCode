@@ -4,46 +4,41 @@ f = open('input')
 
 m = mread(f)
 
-def shortest_path(m):
-    start = mfind(m, 'S')[0]
-    finish = mfind(m, 'E')[0]
+start = mfind(m, 'S')[0]
+finish = mfind(m, 'E')[0]
 
-    q = {start}
-    visited = {start}
+q = {start}
 
-    for iteration in urange(1):
-        nq = set()
+# Cell's (zero-based) index on the (single) path through the labyrinth.
+step = mcreate(msize(m), None)
+step[start[0]][start[1]] = 0
 
-        for i, j in q:
-            for ni, nj in deltas(m, i, j):
-                if m[ni][nj] != '#' and (ni, nj) not in visited:
-                    visited.add((ni, nj))
-                    nq.add((ni, nj))
+for iteration in urange(1):
+    nq = set()
 
-        q = nq
+    for i, j in q:
+        for ni, nj in deltas(m, i, j):
+            if m[ni][nj] != '#' and step[ni][nj] is None:
+                step[ni][nj] = iteration
+                nq.add((ni, nj))
 
-        if finish in nq:
-            break
+    q = nq
 
-    return iteration
+    if finish in nq:
+        break
 
-original_path = shortest_path(m)
+LEAP = 2
 
 count = 0
 
-for i, j in tqdm(mrange(m)):
-    if m[i][j] == '#':
+for i, j in mrange(step):
+    if step[i][j] is not None:
+        for ni in range(i - LEAP, i + LEAP + 1):
+            for nj in range(j - LEAP, j + LEAP + 1):
+                if mfits(step, ni, nj) and step[ni][nj] is not None:
+                    shortcut = abs(ni - i) + abs(nj - j)
 
-        # Added post factum to speed this up at least a little bit.
-        if sum(1 for ni, nj in deltas(m, i, j) if m[ni][nj] != '#') < 2:
-            continue
-
-        m[i][j] = '.'
-        path = shortest_path(m)
-
-        if original_path - path >= 100:
-            count += 1
-
-        m[i][j] = '#'
+                    if shortcut <= LEAP and step[ni][nj] - step[i][j] - shortcut >= 100:
+                        count += 1
 
 print(count)

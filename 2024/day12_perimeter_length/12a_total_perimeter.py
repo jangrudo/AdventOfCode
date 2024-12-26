@@ -12,23 +12,19 @@ def get_area(i0, j0):
     if visited[i0][j0]:
         return None
 
-    area = {(i0, j0)}
-
-    q = {(i0, j0)}
+    area = [(i0, j0)]
     visited[i0][j0] = True
 
-    while len(q) > 0:
-        nq = set()
+    for tail in urange():
+        if tail == len(area):
+            break
 
-        for i, j in q:
+        i, j = area[tail]
 
-            for ni, nj in deltas(m, i, j):
-                if m[ni][nj] == m[i][j] and not visited[ni][nj]:
-                    nq.add((ni, nj))
-                    visited[ni][nj] = True
-                    area.add((ni, nj))
-
-        q = nq
+        for ni, nj in deltas(m, i, j):
+            if m[ni][nj] == m[i][j] and not visited[ni][nj]:
+                visited[ni][nj] = True
+                area.append((ni, nj))
 
     return area
 

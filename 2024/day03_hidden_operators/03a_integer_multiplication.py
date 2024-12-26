@@ -2,43 +2,12 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-def count(s):
-    total = 0
+ops = re.findall(r'mul\(\d{1,3},\d{1,3}\)', f.read())
 
-    i = 0
-    while i < len(s):
-        i = s.find('mul(', i)
-        if i == -1:
-            break
+total = 0
 
-        i += 4
-        if i >= len(s) or s[i] not in string.digits:
-            continue
+for op in ops:
+    op1, op2 = ints(op)
+    total += op1 * op2
 
-        start1 = i
-        while i < len(s) and s[i] in string.digits and i < start1 + 3:
-            i += 1
-        if i >= len(s) or s[i] != ',':
-            continue
-
-        op1 = int(s[start1 : i])
-
-        i += 1
-        if i >= len(s) or s[i] not in string.digits:
-            continue
-
-        start2 = i
-        while i < len(s) and s[i] in string.digits and i < start2 + 3:
-            i += 1
-        if i >= len(s) or s[i] != ')':
-            continue
-
-        op2 = int(s[start2 : i])
-
-        i += 1
-
-        total += op1 * op2
-
-    return total
-
-print(count(f.read()))
+print(total)

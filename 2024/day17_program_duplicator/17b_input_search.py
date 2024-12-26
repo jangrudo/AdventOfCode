@@ -1,82 +1,83 @@
+# Idea stolen from here: https://github.com/KajaBraz/AdventOfCode2024
+
 from aoc_shortcuts import *
 
 f = open('input')
 
-lines(f)  # Ignore. Registers b and c seem to be always set to zero.
+initial_reg = [ints(s)[0] for s in lines(f)]
 
 program = ints(f.readline())
 
-# The program seems to be nearly identical across various inputs, with 2 key parameters.
-assert program[0 : 2] == [2, 4]       # b = a % 8
-
-assert program[2] == 1
-assert program[3] <= 7
-xorparam_1 = program[3]               # b ^= xorparam_1
-
-# Some of the following instructions can be reordered without affecting the final result.
-assert {program[4], program[6], program[8], program[10], program[12]} == {7, 4, 1, 5, 0}
-
-for ip in [4, 6, 8, 10, 12]:
-    if program[ip] == 7:
-        assert program[ip + 1] == 5   # c = a // (2 ** b)
-
-    elif program[ip] == 4:
-        pass  # Argument ignored.     # b ^= c
-
-    elif program[ip] == 1:
-        assert program[ip + 1] <= 7
-        xorparam_2 = program[ip + 1]  # b ^= xorparam_2
-
-    elif program[ip] == 5:
-        assert program[ip + 1] == 5   # output b % 8
-
-    elif program[ip] == 0:
-        assert program[ip + 1] == 3   # a //= 8
-
-assert program[14 : 16] == [3, 0]     # repeat until a == 0
-
-# Program summary (for non-zero a):
+# The program in the input files seems to consist of a single loop, which converts the
+# value in register `a` to some output value (without using any extra data, and without
+# modifying the register `a` itself), then divides the value in register `a` by 8, and
+# exits when `a` becomes zero.
 #
-# while a != 0:
-#     x = (a % 8) ^ xorparam_1         # x is up to 3 bits long (0 <= x <= 7).
-#     y = a // (2 ** x)                # Remove up to 7 bits from a, and store this in y.
-#     print((x ^ y ^ xorparam_2) % 8)  # Only need 3 bits of y (i.e. up to 10 bits of a).
-#     a //= 8                          # Remove the last 3 bits from a.
+# Therefore, at any iteration, future output of the program only depends on the value in
+# register `a`, and its previous values are obtained by adding extra bits to the current
+# one (3 bits at a time). We can thus match the output backwards, and by always trying
+# smaller 3-bit extensions first, the'd make sure that the first value matching the
+# entire output would also be the smallest possible.
 
-candidates = []
+def get_combo(reg, arg):
+    if arg <= 3:
+        return arg
+    assert arg != 7
+    return reg[arg - 4]
 
-# "nibbles" are a list of 3-bit pieces sliced off the original number. "head" is 7 more
-# bits needed to generate the output matched so far (one output digit per "nibble").
-def iterate(nibbles, head):
+# Only need one character, provided that what follows has already been matched.
+def get_first_output(program, reg):
 
-    depth = len(nibbles)  # "depth" is the number of digits matched so far.
+    ip = 0
 
-    if depth == len(program):
-        if head == 0:  # The program terminates when "head" is zero.
-            value = 0
-            for nibble in reversed(nibbles):
-                value = value * 8 + nibble
-            candidates.append(value)
-        return
+    while ip + 1 < len(program):
 
-    x = (head % 8) ^ xorparam_1
+        opcode = program[ip]
+        arg = program[ip + 1]
 
-    # "extra" are 3 more bits needed to generate the next output digit.
+        if opcode == 0:
+            reg[0] //= 2 ** get_combo(reg, arg)
+
+        elif opcode == 1:
+            reg[1] ^= arg
+
+        elif opcode == 2:
+            reg[1] = get_combo(reg, arg) % 8
+
+        elif opcode == 3:
+            assert False  # Expect some output in every iteration (before the jump).
+
+        elif opcode == 4:
+            reg[1] ^= reg[2]
+
+        elif opcode == 5:
+            return get_combo(reg, arg) % 8
+
+        elif opcode == 6:
+            reg[1] = reg[0] // 2 ** get_combo(reg, arg)
+
+        elif opcode == 7:
+            reg[2] = reg[0] // 2 ** get_combo(reg, arg)
+
+        ip += 2
+
+def iterate(reg_a, matched_count):
+    if matched_count == len(program):
+        return reg_a
+
     for extra in range(8):
+        prev_reg_a = reg_a * 8 + extra
 
-        chunk = extra * 128 + head  # "chunk" contains all the data for the next digit.
+        reg = initial_reg.copy()
+        reg[0] = prev_reg_a
 
-        y = chunk // (2 ** x)
-        b = (y ^ x ^ xorparam_2) % 8
+        output = get_first_output(program, reg)
+        if output == program[len(program) - matched_count - 1]:
 
-        if b == program[depth]:  # Stop the recursion on first non-matching digit.
-            nibbles.append(chunk % 8)
-            iterate(nibbles, chunk // 8)
-            nibbles.pop()
+            result = iterate(prev_reg_a, matched_count + 1)
+            if result is not None:
+                return result
 
-for head in range(128):  # Start with any of the possible 7-bit combinations.
-    iterate([], head)
+    return None
 
-print(f'{len(candidates)} candidates found.')
-
-print(sorted(candidates)[0])
+print(iterate(0, 0))

@@ -13,8 +13,4 @@ for line in f:
 left.sort()
 right.sort()
 
-total = 0
-for i in range(len(left)):
-    total += max(left[i], right[i]) - min(left[i], right[i])
-
-print(total)
+print(sum(abs(left[i] - right[i]) for i in range(len(left))))

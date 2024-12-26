@@ -4,49 +4,42 @@ f = open('input')
 
 m = mread(f)
 
-Node = xtuple('i j direction')
+Node = xtuple('i j d')
 
 i0, j0 = mfind(m, 'S')[0]
 fi, fj = mfind(m, 'E')[0]
 
 def next_nodes(node, length):
-    nodes = [
-        (Node(node.i, node.j, TURN_LEFT[node.direction]), length + 1000),
-        (Node(node.i, node.j, TURN_RIGHT[node.direction]), length + 1000),
-    ]
-    ni, nj = mmove(node.i, node.j, node.direction)
+    yield (Node(node.i, node.j, TURN_LEFT[node.d]), length + 1000)
+    yield (Node(node.i, node.j, TURN_RIGHT[node.d]), length + 1000)
+
+    ni, nj = mmove(node.i, node.j, node.d)
     if m[ni][nj] != '#':
-        nodes.append((Node(ni, nj, node.direction), length + 1))
+        yield (Node(ni, nj, node.d), length + 1)
 
-    return nodes
-
-q = {Node(i0, j0, '>') : 0}
-marked = {}
+reached = {Node(i0, j0, '>') : 0}
+q = SortedList((length, node) for node, length in reached.items())
+solved = set()
 
 targets = [Node(fi, fj, d) for d in STEP]
 
-total_node_count = mcount(m, '.SE') * 4
-progress = tqdm(total = total_node_count)
+while any(target not in solved for target in targets):
 
-while any(target not in marked for target in targets):
+    minlength, bestnode = q.pop(0)
+    solved.add(bestnode)
 
-    minlength = None
-    bestnode = None
-    for node, length in q.items():
-        minlength, bestnode = argmin(minlength, bestnode, length, node)
+    for node, length in next_nodes(bestnode, minlength):
+        if node not in solved:
 
-    del q[bestnode]
+            if node not in reached:
+                q.add((length, node))
+                reached[node] = length
 
-    marked[bestnode] = minlength
-    progress.update(1)
+            elif length < reached[node]:
+                q.remove((reached[node], node))
+                q.add((length, node))
+                reached[node] = length
 
-    for nnode, nlength in next_nodes(bestnode, minlength):
-        if nnode not in marked and (nnode not in q or q[nnode] > nlength):
-            q[nnode] = nlength
-
-progress.update(total_node_count - len(marked))
-progress.close()
-
-min_score = min(marked[node] for node in targets)
+min_score = min(reached[node] for node in targets)
 
 print(min_score)

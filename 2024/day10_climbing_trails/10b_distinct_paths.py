@@ -7,28 +7,21 @@ m = mread(f)
 for i, j in mrange(m):
     m[i][j] = int(m[i][j])
 
-def iterate(path):
-    i, j = path[-1]
-    current = m[i][j]
-
-    if len(path) == 10:
+def iterate(i, j):
+    if m[i][j] == 9:
         return 1
 
     count = 0
 
     for ni, nj in deltas(m, i, j):
-        if m[ni][nj] == current + 1:
-            path.append((ni, nj))
-            count += iterate(path)
-            path.pop()
+        if m[ni][nj] == m[i][j] + 1:
+            count += iterate(ni, nj)
 
     return count
 
 count = 0
 
-for i, j in mrange(m):
-    if m[i][j] == 0:
-        path = [(i, j)]
-        count += iterate(path)
+for i, j in mfind(m, [0]):
+    count += iterate(i, j)
 
 print(count)

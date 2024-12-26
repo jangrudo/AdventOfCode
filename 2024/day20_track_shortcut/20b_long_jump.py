@@ -8,46 +8,37 @@ start = mfind(m, 'S')[0]
 finish = mfind(m, 'E')[0]
 
 q = {start}
-visited = {start}
-prev = {}
+
+# Cell's (zero-based) index on the (single) path through the labyrinth.
+step = mcreate(msize(m), None)
+step[start[0]][start[1]] = 0
 
 for iteration in urange(1):
     nq = set()
 
     for i, j in q:
         for ni, nj in deltas(m, i, j):
-            if m[ni][nj] != '#' and (ni, nj) not in visited:
-                visited.add((ni, nj))
+            if m[ni][nj] != '#' and step[ni][nj] is None:
+                step[ni][nj] = iteration
                 nq.add((ni, nj))
-                prev[(ni, nj)] = (i, j)
 
     q = nq
 
     if finish in nq:
         break
 
-path = [finish]
-while path[-1] != start:
-    path.append(prev[path[-1]])
-
-path = list(reversed(path))
+LEAP = 20
 
 count = 0
 
-# Ensure steady progress by pre-calculating the total pair count.
-progress = tqdm(total = ((len(path)) * (len(path) - 1)) // 2)
+for i, j in tqdm(mrange(step)):
+    if step[i][j] is not None:
+        for ni in range(i - LEAP, i + LEAP + 1):
+            for nj in range(j - LEAP, j + LEAP + 1):
+                if mfits(step, ni, nj) and step[ni][nj] is not None:
+                    shortcut = abs(ni - i) + abs(nj - j)
 
-for i in range(len(path) - 1):
-    for j in range(i + 1, len(path)):
-        shortcut = abs(path[i][0] - path[j][0]) + abs(path[i][1] - path[j][1])
-        if shortcut <= 20:
-            cheat_path = len(path) - (j - i) + shortcut
-
-            if cheat_path <= len(path) - 100:
-                count += 1
-
-    # Updating the progress inside the inner loop is too slow even for tqdm.
-    progress.update(len(path) - i - 1)
-progress.close()
+                    if shortcut <= LEAP and step[ni][nj] - step[i][j] - shortcut >= 100:
+                        count += 1
 
 print(count)

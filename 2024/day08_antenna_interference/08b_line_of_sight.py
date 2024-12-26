@@ -11,30 +11,20 @@ marks = deepcopy(m)
 for c in letters:
     points = mfind(m, c)
 
-    for a in range(len(points) - 1):
-        for b in range(a + 1, len(points)):
-            di = points[b][0] - points[a][0]
-            dj = points[b][1] - points[a][1]
+    for p1 in points:
+        for p2 in points:
+            # Each point pair is processed twice, with alternating directions.
+            if p1 != p2:
+                di = p2[0] - p1[0]
+                dj = p2[1] - p1[1]
 
-            k = 0
-            while True:
-                ni1 = points[a][0] - di * k
-                nj1 = points[a][1] - dj * k
+                for k in urange():
+                    ni = p2[0] + di * k
+                    nj = p2[1] + dj * k
 
-                ni2 = points[b][0] + di * k
-                nj2 = points[b][1] + dj * k
-
-                fits = False
-                if mfits(m, ni1, nj1):
-                    fits = True
-                    marks[ni1][nj1] = '#'
-                if mfits(m, ni2, nj2):
-                    fits = True
-                    marks[ni2][nj2] = '#'
-
-                if not fits:
-                    break
-                k += 1
+                    if not mfits(m, ni, nj):
+                        break
+                    marks[ni][nj] = '#'
 
 mprint(marks)
 

@@ -2,46 +2,25 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-a = ints(f.readline())
+a = Counter(ints(f.readline()))
 
-Node = xclass('value', nxt=None)
+for iteration in range(25):
 
-root = Node(a[0])
-tail = root
+    na = Counter()
 
-for x in a[1:]:
-    node = Node(x)
-    tail.nxt = node
-    tail = node
+    for x, count in a.items():
+        s = str(x)
 
-for iteration in tqdm(range(25)):
-
-    node = root
-    while node is not None:
-        s = str(node.value)
-
-        if node.value == 0:
-            node.value = 1
+        if x == 0:
+            na[1] += count
 
         elif len(s) % 2 == 0:
-            value1 = int(s[: len(s) // 2])
-            value2 = int(s[len(s) // 2 :])
-            node.value = value1
-            new = Node(value2)
-            new.nxt = node.nxt
-            node.nxt = new
-            node = new
+            na[int(s[: len(s) // 2])] += count
+            na[int(s[len(s) // 2 :])] += count
 
         else:
-            node.value *= 2024
+            na[x * 2024] += count
 
-        node = node.nxt
+    a = na
 
-def count_nodes(node):
-    count = 0
-    while node is not None:
-        count += 1
-        node = node.nxt
-    return count
-
-print(count_nodes(root))
+print(a.total())

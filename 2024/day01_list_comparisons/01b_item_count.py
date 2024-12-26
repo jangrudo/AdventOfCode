@@ -10,8 +10,4 @@ for line in f:
     left.append(l)
     right.append(r)
 
-total = 0
-for x in left:
-    total += x * right.count(x)
-
-print(total)
+print(sum(x * right.count(x) for x in left))

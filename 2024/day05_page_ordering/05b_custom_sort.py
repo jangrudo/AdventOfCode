@@ -2,9 +2,7 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-rules = set()
-
-total = 0
+rules = set(tuple(ints(s)) for s in lines(f))
 
 def compare(x, y):
     if (x, y) in rules:
@@ -19,8 +17,7 @@ def check(a):
             return False
     return True
 
-for s in lines(f):
-    rules.add(tuple(ints(s)))
+total = 0
 
 for s in lines(f):
     a = ints(s)

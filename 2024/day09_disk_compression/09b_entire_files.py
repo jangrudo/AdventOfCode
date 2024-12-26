@@ -4,59 +4,57 @@ f = open('input')
 
 dense = [int(c) for c in f.readline().strip()]
 
-a = []
+# i denotes left boundary of the memory block.
+Block = xtuple('size i')
 
-ident = 0
+# This essentially functions as 10 adjacent lists (one per block size), each sorted by i.
+free = SortedList()
+used = []
 
-free = False
-for length in dense:
-    if free:
-        a += ['.'] * length
+i = 0
+is_free = False
+
+for size in dense:
+    if is_free:
+        free.add(Block(size, i))
     else:
-        a += [ident] * length
-        ident += 1
-    free = not free
+        used.append(Block(size, i))
 
-def move(i0, size):
-    j = 0
-    while True:
-        while j < i0 and a[j] != '.':
-            j += 1
+    i += size
+    is_free = not is_free
 
-        if j == i0:
-            return
+for ident in tqdm(range(len(used) - 1, -1, -1)):
 
-        nj = j
-        while nj < i0 and a[nj] == '.':
-            nj += 1
+    # For each block size, find the leftmost free block. Among these, once again pick the
+    # leftmost one.
 
-        if nj - j >= size:
-            for k in range(size):
-                a[j + k] = a[i0 + k]
-                a[i0 + k] = '.'
-            return
+    imin = None
+    kbest = None
+    for size in range(used[ident].size, 10):
 
-        j = nj
+        # Index of the leftmost block among free blocks of the given size.
+        k = free.bisect_left(Block(size, 0))
 
-last_ident = a[-1]
+        # If such a block exists and is available for relocation, include if in the final
+        # calculation for the minimal i. Also record its index k within the free array.
+        if k < len(free) and free[k].i < used[ident].i:
+            imin, kbest = argmin(imin, kbest, free[k].i, k)
 
-i = len(a) - 1
+    # Remove the found free block, and replace it with a smaller one.
+    if kbest is not None:
+        free_block = free.pop(kbest)
 
-for ident in tqdm(range(last_ident, -1, -1)):
-    while a[i] != ident:
-        i -= 1
+        used[ident] = Block(used[ident].size, free_block.i)
 
-    ni = i
-    while ni >= 0 and a[ni] == ident:
-        ni -= 1
+        nsize = free_block.size - used[ident].size
+        ni = free_block.i + used[ident].size
 
-    move(ni + 1, i - ni)
-    i = ni
+        free.add(Block(nsize, ni))
 
 total = 0
 
-for i in range(len(a)):
-    if a[i] != '.':
-        total += i * a[i]
+for ident, block in enumerate(used):
+    for i in range(block.i, block.i + block.size):
+        total += i * ident
 
 print(total)

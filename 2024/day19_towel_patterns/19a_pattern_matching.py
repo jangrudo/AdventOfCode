@@ -16,10 +16,4 @@ def solvable(s):
 
 patterns = lines(f)[0].split(', ')
 
-count = 0
-
-for s in tqdm(lines(f)):
-    if solvable(s):
-        count += 1
-
-print(count)
+print(sum(solvable(s) for s in tqdm(lines(f))))

@@ -2,8 +2,6 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-count = 0
-
 def is_safe(a):
     if not (a == sorted(a) or a == sorted(a, reverse=True)):
         return False
@@ -12,10 +10,4 @@ def is_safe(a):
             return False
     return True
 
-for line in f:
-    a = ints(line)
-
-    if is_safe(a):
-        count += 1
-
-print(count)
+print(sum(is_safe(ints(line)) for line in f))

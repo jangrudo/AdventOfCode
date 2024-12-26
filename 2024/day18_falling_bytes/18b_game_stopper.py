@@ -27,18 +27,12 @@ def can_move():
                 if (ni, nj) == (70, 70):
                     return True
 
-progress = tqdm(total = len(falls) - 1024)
-
-for fallen in range(1024, len(falls)):
+for fallen in tqdm(range(1024, len(falls))):
 
     m[falls[fallen][1]][falls[fallen][0]] = '#'
 
     if not can_move():
-        progress.update(len(falls) - fallen)
-        progress.close()
         break
-
-    progress.update(1)
 
 m[falls[fallen][1]][falls[fallen][0]] = 'O'
 mprint(m)

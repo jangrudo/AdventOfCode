@@ -2,9 +2,9 @@ https://adventofcode.com/about
 
 ---
 
-Solutions without an extra suffix are close to the originals, with some cleanup and
-polishing.
+Solutions without an extra suffix are considered the better ones.
 
-Solutions with **“x”** suffix are post factum improvements.
+Solutions with **“o”** suffix are optimized for speed, but take longer to code.
 
-Solutions with **“z”** suffix are optimized for speed, at the cost of clarity.
+Solutions with **“u”** suffix are (mostly) unchanged originals, kept for history. They
+are the worst.

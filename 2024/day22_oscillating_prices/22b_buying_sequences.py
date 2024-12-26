@@ -2,10 +2,11 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-total = {}
+total = Counter()
 
 def simulate(n):
-    a = [n % 10]
+    last = n % 10
+    deltas = []
 
     price = {}
 
@@ -14,22 +15,20 @@ def simulate(n):
         n = ((n // 32) ^ n) % 16777216
         n = ((n * 2048) ^ n) % 16777216
 
-        a.append(n % 10)
+        prev = last
+        last = n % 10
+        deltas.append(last - prev)
 
-        if len(a) >= 5:
-            tail = a[-5 : ]
-            seq = tuple(tail[i + 1] - tail[i] for i in range(4))
+        if len(deltas) >= 4:
+            seq = tuple(deltas[-4 :])
 
             if seq not in price:
-                price[seq] = a[-1]
+                price[seq] = last
 
     for seq in price:
-        if seq not in total:
-            total[seq] = price[seq]
-        else:
-            total[seq] += price[seq]
+        total[seq] += price[seq]
 
 for s in tqdm(lines(f)):
     simulate(int(s))
 
-print(max(total[seq] for seq in total))
+print(max(total.values()))
