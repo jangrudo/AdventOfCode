@@ -393,7 +393,7 @@ def argmax(max_value, best_parameter, value, parameter):
 aoc_library_now = datetime.datetime.now()
 
 def print_finish_time():
-    print('Finished in', datetime.datetime.now() - aoc_library_now)
+    print('Finished in', datetime.datetime.now() - aoc_library_now, file=sys.stderr)
 
 # Always print finish time statistics, unless the script terminates with exception.
 atexit.register(print_finish_time)
@@ -408,4 +408,4 @@ sys.excepthook = _aoc_library_excepthook
 
 # ---- Startup --------------------------------------------------------------------------
 # Override IDE's habit of running Python scripts from project's root directory.
-os.chdir(pathlib.Path(sys.argv[0]).parent)
+os.chdir(pathlib.Path(sys.argv[0]).resolve().parent)

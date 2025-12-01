@@ -6,14 +6,14 @@ m = mread(f)
 
 total = 0
 
-visited = mcreate(msize(m), False)
+painted = mcreate(msize(m), False)
 
 def get_area(i0, j0):
-    if visited[i0][j0]:
+    if painted[i0][j0]:
         return None
 
     area = [(i0, j0)]
-    visited[i0][j0] = True
+    painted[i0][j0] = True
 
     for tail in urange():
         if tail == len(area):
@@ -22,8 +22,8 @@ def get_area(i0, j0):
         i, j = area[tail]
 
         for ni, nj in deltas(m, i, j):
-            if m[ni][nj] == m[i][j] and not visited[ni][nj]:
-                visited[ni][nj] = True
+            if m[ni][nj] == m[i][j] and not painted[ni][nj]:
+                painted[ni][nj] = True
                 area.append((ni, nj))
 
     return area

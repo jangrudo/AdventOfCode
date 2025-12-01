@@ -13,7 +13,8 @@ def next_nodes(node, length):
         (Node(node.i, node.j, TURN_LEFT[node.direction]), length + 1000),
         (Node(node.i, node.j, TURN_RIGHT[node.direction]), length + 1000),
     ]
-    ni, nj = mmove(node.i, node.j, node.direction)
+    di, dj = STEP[node.direction]
+    ni, nj = node.i + di, node.j + dj
     if m[ni][nj] != '#':
         nodes.append((Node(ni, nj, node.direction), length + 1))
 

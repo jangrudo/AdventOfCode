@@ -5,27 +5,31 @@ with open('input') as f:
 
 total = 0
 
-painted = deepcopy(m)
-for i, j in mrange(painted):
-    painted[i][j] = False
+visited = deepcopy(m)
+for i, j in mrange(visited):
+    visited[i][j] = False
 
 def get_area(i0, j0):
-    if painted[i0][j0]:
+    if visited[i0][j0]:
         return None
 
-    area = [(i0, j0)]
-    painted[i0][j0] = True
+    area = {(i0, j0)}
 
-    for tail in urange():
-        if tail == len(area):
-            break
+    q = {(i0, j0)}
+    visited[i0][j0] = True
 
-        i, j = area[tail]
+    while len(q) > 0:
+        nq = set()
 
-        for ni, nj in deltas(m, i, j):
-            if m[ni][nj] == m[i][j] and not painted[ni][nj]:
-                painted[ni][nj] = True
-                area.append((ni, nj))
+        for i, j in q:
+
+            for ni, nj in deltas(m, i, j):
+                if m[ni][nj] == m[i][j] and not visited[ni][nj]:
+                    nq.add((ni, nj))
+                    visited[ni][nj] = True
+                    area.add((ni, nj))
+
+        q = nq
 
     return area
 
