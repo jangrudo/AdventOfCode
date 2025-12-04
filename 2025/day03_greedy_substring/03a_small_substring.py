@@ -5,13 +5,8 @@ f = open('input')
 total = 0
 
 for s in lines(f):
-    joltage = None
-
-    for i in range(len(s) - 1):
-        for j in range(i + 1, len(s)):
-            joltage = gmax(joltage, int(s[i]) * 10 + int(s[j]))
-
-    print(joltage)
-    total += joltage
+    c1 = max(s[: -1])
+    c2 = max(s[s.find(c1) + 1 :])
+    total += int(c1) * 10 + int(c2)
 
 print(total)
