@@ -3,7 +3,7 @@ requires = ["setuptools >= 64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "aoc_shortcuts"  # Name chosen to prevent collisions with PyPI.
+name = "aoc-shortcuts"  # Name chosen to prevent collisions with PyPI.
 version = "2025"
 dependencies = ["numpy", "sortedcontainers", "tqdm", "pytest"]
 authors = [{name = "Jan Grudo"}]
