@@ -2,57 +2,49 @@ from aoc_shortcuts import *
 
 f = open('input')
 
-Point = xclass('x y', dx=None, dy=None, mi=None, mj=None)
+Point = xclass('x y', dx=None, dy=None, i=None, j=None)
 
-p = []
+points = []
 for a in lints(f):
-    p.append(Point(*a))
+    points.append(Point(*a))
 
-for i in range(len(p) - 1):
-    for j in range(i + 1, len(p)):
-        if p[i].y == p[j].y:
-            assert p[i].dx is None
-            p[i].dx = 1 if p[j].x > p[i].x else -1
-            p[j].dx = -p[i].dx
-        if p[i].x == p[j].x:
-            assert p[i].dy is None
-            p[i].dy = 1 if p[j].y > p[i].y else -1
-            p[j].dy = -p[i].dy
+# Calculate directions towards neighboring points.
+for p1 in points:
+    for p2 in points:
+        if p1 != p2:
+            if p1.x == p2.x:
+                assert p1.dy is None
+                p1.dy = 1 if p2.y > p1.y else -1
+            elif p1.y == p2.y:
+                assert p1.dx is None
+                p1.dx = 1 if p2.x > p1.x else -1
 
-xs = sorted(set(pt.x for pt in p))
-ys = sorted(set(pt.y for pt in p))
-
-pset = set((pt.x, pt.y) for pt in p)
+# Compress points into a smaller grid.
+xs = sorted(set(p.x for p in points))
+ys = sorted(set(p.y for p in points))
 
 m = mcreate((len(xs), len(ys)), '.')
 
-pref = mcreate((len(xs), len(ys)), None)
+# Map point coordinates to grid indices.
+for p in points:
+    p.i = xs.index(p.x)
+    p.j = ys.index(p.y)
 
-def findpt(p, x, y):
-    for pt in p:
-        if pt.x == x and pt.y == y:
-            return pt
-    assert False
+for p in points:
+    m[p.i][p.j] = '#'
 
-for i, j in mrange(m):
-    if (xs[i], ys[j]) in pset:
-        m[i][j] = '#'
-        pref[i][j] = findpt(p, xs[i], ys[j])
+# Draw lines between neighboring points.
+for p in points:
+    for ni in urange(p.i + p.dx, p.dx):
+        if m[ni][p.j] == '#':
+            break
+        m[ni][p.j] = '#'
+    for nj in urange(p.j + p.dy, p.dy):
+        if m[p.i][nj] == '#':
+            break
+        m[p.i][nj] = '#'
 
-for i, j in mrange(m):
-    if (xs[i], ys[j]) in pset:
-        dx = pref[i][j].dx
-        ni = i
-        while m[ni + dx][j] != '#':
-            m[ni + dx][j] = '#'
-            ni += dx
-
-        dy = pref[i][j].dy
-        nj = j
-        while m[i][nj + dy] != '#':
-            m[i][nj + dy] = '#'
-            nj += dy
-
+# Paint outside space with '@'.
 def paint(m, i0, j0):
     assert m[i0][j0] == '.'
 
@@ -62,48 +54,35 @@ def paint(m, i0, j0):
         for i, j in q:
             m[i][j] = '@'
             for ni, nj in deltas(m, i, j):
-                if m[ni][nj] not in '@#':
+                if m[ni][nj] == '.':
                     nq.add((ni, nj))
         q = nq
 
-imax, jmax = msize(m)
+# It looks like image corners always lie outside the boundary.
+height, width = msize(m)
 
 paint(m, 0, 0)
-paint(m, 0, jmax - 1)
-paint(m, imax - 1, 0)
-paint(m, imax - 1, jmax - 1)
+paint(m, 0, width - 1)
+paint(m, height - 1, 0)
+paint(m, height - 1, width - 1)
 
-for pt in p:
-    pt.mi = xs.index(pt.x)
-    pt.mj = ys.index(pt.y)
-    assert pt.x == xs[pt.mi]
-    assert pt.y == ys[pt.mj]
+# Check if a rectangle lies entirely within the boundary.
+def fits(m, p1, p2):
+    imin, imax = sorted((p1.i, p2.i))
+    jmin, jmax = sorted((p1.j, p2.j))
 
-def isgood(m, mis, mif, mjs, mjf):
-    assert mis <= mif
-    assert mjs <= mjf
-
-    for mi in range(mis, mif + 1):
-        for mj in range(mjs, mjf + 1):
-            if m[mi][mj] not in '.#':
+    for i in range(imin, imax + 1):
+        for j in range(jmin, jmax + 1):
+            if m[i][j] == '@':
                 return False
     return True
 
 surface = None
 
-for k1 in tqdm(range(len(p) - 1)):
-    for k2 in range(k1 + 1, len(p)):
-        mi1 = p[k1].mi
-        mj1 = p[k1].mj
-        mi2 = p[k2].mi
-        mj2 = p[k2].mj
-
-        mis = min(mi1, mi2)
-        mif = max(mi1, mi2)
-        mjs = min(mj1, mj2)
-        mjf = max(mj1, mj2)
-
-        if isgood(m, mis, mif, mjs, mjf):
-            surface = gmax(surface, (xs[mif] - xs[mis] + 1) * (ys[mjf] - ys[mjs] + 1))
+for p1 in tqdm(points):
+    for p2 in points:
+        if p1 < p2:
+            if fits(m, p1, p2):
+                surface = gmax(surface, (abs(p1.x - p2.x) + 1) * (abs(p1.y - p2.y) + 1))
 
 print(surface)
